@@ -56,11 +56,12 @@ namespace CleanArchitecture.Web
                     _.WithDefaultConventions();
                     _.ConnectImplementationsToTypesClosing(typeof(IHandle<>));
                 });
-                
+
                 // TODO: Add Registry Classes
 
                 // TODO: Move to Infrastucture Registry
                 config.For(typeof(IRepository<>)).Add(typeof(EfRepository<>));
+                config.For<IRepository<Guestbook>>().Use<GuestbookRepository>();
 
                 //Populate the container using the service collection
                 config.Populate(services);

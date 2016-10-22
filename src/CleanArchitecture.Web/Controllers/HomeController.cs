@@ -38,6 +38,22 @@ namespace CleanArchitecture.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public IActionResult Index(HomePageViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var guestbook = _guestbookRepository.GetById(1);
+                guestbook.Entries.Add(model.NewEntry);
+                _guestbookRepository.Update(guestbook);
+
+                model.PreviousEntries.Clear();
+                model.PreviousEntries.AddRange(guestbook.Entries);
+            }
+            return View(model);
+
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

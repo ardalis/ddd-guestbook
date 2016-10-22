@@ -9,14 +9,14 @@ namespace CleanArchitecture.Infrastructure.Data
 {
     public class EfRepository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly AppDbContext _dbContext;
+        protected readonly AppDbContext _dbContext;
 
         public EfRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public T GetById(int id)
+        public virtual T GetById(int id)
         {
             return _dbContext.Set<T>().SingleOrDefault(e => e.Id == id);
         }
