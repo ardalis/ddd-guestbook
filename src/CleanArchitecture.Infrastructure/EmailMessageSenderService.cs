@@ -20,7 +20,6 @@ namespace CleanArchitecture.Infrastructure
                 client.Send(message);
                 client.Disconnect(true);
             }
-
         }
     }
 }
