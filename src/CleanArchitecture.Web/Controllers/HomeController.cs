@@ -13,10 +13,13 @@ namespace CleanArchitecture.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IRepository<Guestbook> _guestbookRepository;
+        private readonly IMessageSender _messageSender;
 
-        public HomeController(IRepository<Guestbook> guestbookRepository)
+        public HomeController(IRepository<Guestbook> guestbookRepository,
+            IMessageSender messageSender)
         {
             _guestbookRepository = guestbookRepository;
+            _messageSender = messageSender;
         }
 
         public IActionResult Index()
@@ -56,19 +59,7 @@ namespace CleanArchitecture.Web.Controllers
                 foreach (var emailAddress in emailsToNotify)
                 {
                     string messageBody = "{model.NewEntry.EmailAddress} left new message {model.NewEntry.Message}";
-                    string fromAddress = "donotreply@guestbook.com";
-                    var message = new MimeMessage();
-                    message.From.Add(new MailboxAddress("Guestbook", fromAddress));
-                    message.To.Add(new MailboxAddress(emailAddress, emailAddress));
-                    message.Subject = "New Message on GuestBook";
-                    message.Body = new TextPart("plain") {Text = messageBody};
-                    using (var client = new SmtpClient())
-                    {
-                        client.Connect("localhost",25);
-                        client.Send(message);
-                        client.Disconnect(true);
-                    }
-
+                    _messageSender.SendGuestbookNotificationEmail(emailAddress, messageBody);
                 }
 
                 model.PreviousEntries.Clear();

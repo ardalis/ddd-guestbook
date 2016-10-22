@@ -9,7 +9,8 @@
       "type": "build"
     },
     "StructureMap.Microsoft.DependencyInjection": "1.2.0",
-    "CleanArchitecture.Core": "1.0.0-*"
+    "CleanArchitecture.Core": "1.0.0-*",
+    "MailKit": "1.8.1"
   },
 
   "frameworks": {

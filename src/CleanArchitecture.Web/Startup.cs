@@ -62,6 +62,7 @@ namespace CleanArchitecture.Web
                 // TODO: Move to Infrastucture Registry
                 config.For(typeof(IRepository<>)).Add(typeof(EfRepository<>));
                 config.For<IRepository<Guestbook>>().Use<GuestbookRepository>();
+                config.For<IMessageSender>().Use<EmailMessageSenderService>();
 
                 //Populate the container using the service collection
                 config.Populate(services);
