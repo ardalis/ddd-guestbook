@@ -3,8 +3,10 @@ using System.Linq;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Web.ViewModels;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Migrations;
+using MimeKit;
 
 namespace CleanArchitecture.Web.Controllers
 {
@@ -46,6 +48,28 @@ namespace CleanArchitecture.Web.Controllers
                 var guestbook = _guestbookRepository.GetById(1);
                 guestbook.Entries.Add(model.NewEntry);
                 _guestbookRepository.Update(guestbook);
+
+                // send updates to previous entries made within last day
+                var emailsToNotify = guestbook.Entries
+                    .Where(e => e.DateTimeCreated > DateTimeOffset.UtcNow.AddDays(-1))
+                    .Select(e => e.EmailAddress);
+                foreach (var emailAddress in emailsToNotify)
+                {
+                    string messageBody = "{model.NewEntry.EmailAddress} left new message {model.NewEntry.Message}";
+                    string fromAddress = "donotreply@guestbook.com";
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress("Guestbook", fromAddress));
+                    message.To.Add(new MailboxAddress(emailAddress, emailAddress));
+                    message.Subject = "New Message on GuestBook";
+                    message.Body = new TextPart("plain") {Text = messageBody};
+                    using (var client = new SmtpClient())
+                    {
+                        client.Connect("localhost",25);
+                        client.Send(message);
+                        client.Disconnect(true);
+                    }
+
+                }
 
                 model.PreviousEntries.Clear();
                 model.PreviousEntries.AddRange(guestbook.Entries);
