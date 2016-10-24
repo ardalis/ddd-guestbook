@@ -21,31 +21,13 @@ using Newtonsoft.Json;
 namespace CleanArchitecture.Tests.Integration.Web
 {
 
-    public class ApiToDoItemsControllerListShould
+    public class ApiToDoItemsControllerListShould : IClassFixture<TestServerFixture>
     {
         private readonly HttpClient _client;
-        public ApiToDoItemsControllerListShould()
+        public ApiToDoItemsControllerListShould(TestServerFixture fixture)
         {
-            _client = GetClient();
+            _client = fixture.Client;
         }
-        protected HttpClient GetClient()
-        {
-            var builder = new WebHostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>()
-                .UseEnvironment("Testing"); // ensure ConfigureTesting is called in Startup
-
-            var server = new TestServer(builder);
-            var client = server.CreateClient();
-
-            // client always expects json results
-            client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-            return client;
-        }
-
 
         [Fact]
         public async Task ReturnTwoItems()
@@ -58,7 +40,6 @@ namespace CleanArchitecture.Tests.Integration.Web
             Assert.Equal(2, result.Count());
             Assert.Equal(1, result.Count(a => a.Title == "Test Item 1"));
             Assert.Equal(1, result.Count(a => a.Title == "Test Item 2"));
-
         }
     }
 }

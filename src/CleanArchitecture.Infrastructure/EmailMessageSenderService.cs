@@ -20,6 +20,8 @@ namespace CleanArchitecture.Infrastructure
                 client.Send(message);
                 client.Disconnect(true);
             }
+
+            // If SMTP4Dev Crashes, go to Options - Server and uncheck STARTTLS
         }
     }
 }

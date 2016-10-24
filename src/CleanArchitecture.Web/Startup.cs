@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.SharedKernel;
 using CleanArchitecture.Infrastructure;
 using CleanArchitecture.Infrastructure.Data;
 using CleanArchitecture.Infrastructure.DomainEvents;
+using CleanArchitecture.Web.Api;
 using CleanArchitecture.Web.ApiModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,14 +35,12 @@ namespace CleanArchitecture.Web
         public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-
-            // TODO: Add DbContext and IOC
             services.AddDbContext<AppDbContext>(options =>
                 options.UseInMemoryDatabase());
-                //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc();
 
@@ -77,21 +77,17 @@ namespace CleanArchitecture.Web
             ILoggerFactory loggerFactory)
         {
             this.Configure(app, env, loggerFactory);
+
             PopulateTestData(app);
-            //var authorRepository = app.ApplicationServices
-            //    .GetService<IAuthorRepository>();
-            //Task.Run(() => PopulateSampleData(authorRepository));
         }
 
         private void PopulateTestData(IApplicationBuilder app)
         {
             var dbContext = app.ApplicationServices.GetService<AppDbContext>();
-            var toDos = dbContext.ToDoItems;
-            foreach (var item in toDos)
-            {
-                dbContext.Remove(item);
-            }
-            dbContext.SaveChanges();
+
+            // reset the database
+            dbContext.Database.EnsureDeleted();
+
             dbContext.ToDoItems.Add(new ToDoItem()
             {
                 Title = "Test Item 1",
@@ -102,6 +98,11 @@ namespace CleanArchitecture.Web
                 Title = "Test Item 2",
                 Description = "Test Description Two"
             });
+            dbContext.SaveChanges();
+
+            var guestbook = new Guestbook() { Name = "Test Guestbook" };
+            dbContext.Guestbooks.Add(guestbook);
+            guestbook.Entries.Add(new GuestbookEntry() { EmailAddress = "test@test.com", Message = "Test message" });
             dbContext.SaveChanges();
         }
 
