@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using CleanArchitecture.Infrastructure.Data;
 
 namespace CleanArchitecture.Web
 {
@@ -15,6 +18,11 @@ namespace CleanArchitecture.Web
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
+                .ConfigureServices(services =>
+                {
+                    services.AddDbContext<AppDbContext>(options =>
+                        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+                })
                 .UseStartup<Startup>()
                 .Build();
 

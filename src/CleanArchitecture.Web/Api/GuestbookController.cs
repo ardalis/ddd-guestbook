@@ -27,26 +27,18 @@ namespace CleanArchitecture.Web.Api
         public IActionResult GetById(int id)
         {
             var guestbook = _guestbookRepository.GetById(id);
-            //if (guestbook == null)
-            //{
-            //    return NotFound(id);
-            //}
             return Ok(guestbook);
         }
 
-        // POST: api/Guestbook/NewEntry
-        [HttpPost("{id:int}/NewEntry")]
-        public async Task<IActionResult> NewEntry(int id, [FromBody] GuestbookEntry entry)
-        {
-            var guestbook = _guestbookRepository.GetById(id);
-            //if (guestbook == null)
-            //{
-            //    return NotFound(id);
-            //}
-            guestbook.AddEntry(entry);
-            _guestbookRepository.Update(guestbook);
+    // POST: api/Guestbook/NewEntry
+    [HttpPost("{id:int}/NewEntry")]
+    public async Task<IActionResult> NewEntry(int id, [FromBody] GuestbookEntry entry)
+    {
+        var guestbook = _guestbookRepository.GetById(id);
+        guestbook.AddEntry(entry);
+        _guestbookRepository.Update(guestbook);
 
-            return Ok(guestbook);
-        }
+        return Ok(guestbook);
+    }
     }
 }

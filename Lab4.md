@@ -15,16 +15,101 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 
 ## Detailed Steps
 
-- Add a new API Controller for GuestbookController in Web/Api/GuestbookController.cs
+- Add a new API Controller for `GuestbookController` in Web/Api/GuestbookController.cs
 - Add a method to get a Guestbook
-    - Return a 404 Not Found if the Guestbook doesn't exist
-- Add a new integration test class for the ListEntries method
-    - Use ApiToDoItemsControllerListShould as a model to work from
-    - Add test data to Web/Startup.cs PopulateTestData() method
-        - Use Entries.Add() instead of AddEntry() when populating test data
-        - Use a disposable TestServerFixture (see below)
+    - Return a 404 Not Found if the `Guestbook` doesn't exist
+
+### Example
+
+    // GET: api/Guestbook/1
+    [HttpGet("{id:int}")]
+    public IActionResult GetById(int id)
+    {
+        var guestbook = _guestbookRepository.GetById(id);
+        if (guestbook == null)
+        {
+            return NotFound(id);
+        }
+        return Ok(guestbook);
+    }
+
+- Add a new integration test class for the `GetById` method (in Tests/Integration/Web)
+    - Use `ApiToDoItemsControllerListShould` as a reference
+    - Add test data to Web/Startup.cs `PopulateTestData` method
+        - Use ``Entries.Add`` instead of ``AddEntry`` when populating test data (this avoids throwing events)
+        - Add one `Guestbook` with one test `GuestbookEntry`
+        - Use a disposable TestServerFixture (sample at end of lab)
     - Confirm the 404 behavior
     - Confirm entries are returned correctly
+
+### Example
+
+    public class ApiGuestbookControllerListShould : IClassFixture<TestServerFixture>
+    {
+        private readonly TestServerFixture _fixture;
+
+        public ApiGuestbookControllerListShould(TestServerFixture fixture)
+        {
+            _fixture = fixture;
+        }
+
+        [Fact]
+        public void ReturnGuestbookWithOneItem()
+        {
+            var response = _fixture.Client.GetAsync("/api/guestbook/1").Result;
+            response.EnsureSuccessStatusCode();
+            var stringResponse = response.Content.ReadAsStringAsync().Result;
+            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+
+            Assert.Equal(1, result.Id);
+            Assert.Equal(1, result.Entries.Count());
+        }
+
+        [Fact]
+        public void Return404GivenInvalidId()
+        {
+            var response = _fixture.Client.GetAsync("/api/guestbook/100").Result;
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            var stringResponse = response.Content.ReadAsStringAsync().Result;
+
+            Assert.Equal("100", stringResponse);
+        }
+    }
+
+**In Startup.cs**
+
+    private void PopulateTestData(IApplicationBuilder app)
+    {
+        var dbContext = app.ApplicationServices.GetService<AppDbContext>();
+
+        // reset the database
+        dbContext.Database.EnsureDeleted();
+
+        dbContext.ToDoItems.Add(new ToDoItem()
+        {
+            Title = "Test Item 1",
+            Description = "Test Description One"
+        });
+        dbContext.ToDoItems.Add(new ToDoItem()
+        {
+            Title = "Test Item 2",
+            Description = "Test Description Two"
+        });
+        dbContext.SaveChanges();
+
+        // add Guestbook test data; specify Guestbook ID for use in tests
+        var guestbook = new Guestbook() { Name = "Test Guestbook", Id=1 };
+        dbContext.Guestbooks.Add(guestbook);
+        guestbook.Entries.Add(new GuestbookEntry()
+        {
+            EmailAddress = "test@test.com",
+            Message = "Test message"
+        });
+        dbContext.SaveChanges();
+    }
+
+
 - Add an API method to record an entry to a Guestbook
     - Accept a Guestbook ID and a GuestbookEntry
     - Return a 404 Not Found if no Guestbook exists for the ID
@@ -32,19 +117,80 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 - Add a new integration test class for the AddEntry method
     - Confirm the 404 behavior
     - Confirm the entry is created and sent to the repository successfully
-- Extract the 404 behavior into a new VerifyGuestbookExistsAttribute
 
-Add a filter to handle 404 policy
+### Example
+
+**In Api/GuestbookController.cs**
+
+    // POST: api/Guestbook/NewEntry
+    [HttpPost("{id:int}/NewEntry")]
+    public async Task<IActionResult> NewEntry(int id, [FromBody] GuestbookEntry entry)
+    {
+        var guestbook = _guestbookRepository.GetById(id);
+        guestbook.AddEntry(entry);
+        _guestbookRepository.Update(guestbook);
+
+        return Ok(guestbook);
+    }
+
+**ApiGuestbookControllerNewEntryShould.cs**
+
+    public class ApiGuestbookControllerNewEntryShould : IClassFixture<TestServerFixture>
+    {
+        private readonly TestServerFixture _fixture;
+        //private readonly HttpClient _client;
+        public ApiGuestbookControllerNewEntryShould(TestServerFixture fixture)
+        {
+            _fixture = fixture;
+        }
+
+        [Fact]
+        public void Return404GivenInvalidId()
+        {
+            var entryToPost = new { EmailAddress = "test@test.com", Message = "test" };
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
+                "application/json");
+            var response = _fixture.Client.PostAsync("/api/guestbook/100/NewEntry", jsonContent).Result;
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            var stringResponse = response.Content.ReadAsStringAsync().Result;
+
+            Assert.Equal("100", stringResponse);
+        }
+
+        [Fact]
+        public void ReturnGuestbookWithOneItem()
+        {
+            string message = Guid.NewGuid().ToString();
+            var entryToPost = new { EmailAddress = "test@test.com", Message = message };
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
+                "application/json");
+            var response = _fixture.Client.PostAsync("/api/guestbook/1/NewEntry", jsonContent).Result;
+            response.EnsureSuccessStatusCode();
+            var stringResponse = response.Content.ReadAsStringAsync().Result;
+            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+
+            Assert.Equal(1, result.Id);
+            Assert.True(result.Entries.Any(e => e.Message == message));
+        }
+    }
+
+**Note:** If you get test failures due to no mail server being found, make sure you have smtp4dev / postman running.
+
+- Extract the 404 behavior into a new `VerifyGuestbookExistsAttribute`
+
+**Add a filter to handle 404 policy**
 - Create a new Web/Filters/VerifyGuestbookExistsAttribute.cs file
 - See https://github.com/ardalis/GettingStartedWithFilters for reference
-- Inherit from TypeFilterAttribute
-- Create a constructor that chains to base() passing in the typeof(VerifyGuestbookExistsFilter)
-- Create a private class VerifyGuestbookExistsFilter
-- Inherit from IAsyncActionFilter
-- Create a constructor that takes an IGuestbookRepository
-- Implement OnActionExecutionAsync:
+- Inherit from `TypeFilterAttribute`
+- Create a constructor that chains to base() passing in the `typeof(VerifyGuestbookExistsFilter)`
+- Create a private class `VerifyGuestbookExistsFilter`
+- Inherit from `IAsyncActionFilter`
+- Create a constructor that takes an `IGuestbookRepository`
+- Implement `OnActionExecutionAsync`:
 
-    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, 
+                                                ActionExecutionDelegate next)
     {
         if (context.ActionArguments.ContainsKey("id"))
         {
@@ -61,12 +207,13 @@ Add a filter to handle 404 policy
         await next();
     }
 
-- Add the attribute to the API action methods that should return 404 when no guestbook is Found
-    - [VerifyGuestbookExists]
-- Remove the logic from the API methods to do guestbook existence checks and 404 response
-- Confirm (via integration tests) that the behavior remains the same
+- Add the attribute to the API action methods that should return 404 when no guestbook is found
+    - `[VerifyGuestbookExists]`
+    - Can be applied to a Controller to apply it to every Action of the Controller
+- Remove the logic from the API methods to do guestbook existence checks and 404 responses
+- Confirm that the behavior remains the same (re-run integration tests) 
 
-## Examples:
+## Example:
 
 **TestServerFixture**
 
@@ -75,8 +222,12 @@ Add a filter to handle 404 policy
     using System.Net.Http;
     using System.Net.Http.Headers;
     using CleanArchitecture.Web;
+    using CleanArchitecture.Infrastructure.Data;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
 
     namespace CleanArchitecture.Tests.Integration.Web
     {
@@ -90,6 +241,15 @@ Add a filter to handle 404 policy
             {
                 var builder = new WebHostBuilder()
                     .UseContentRoot(Directory.GetCurrentDirectory())
+                    .ConfigureServices(services =>
+                    {
+                        services.AddDbContext<AppDbContext>(options =>
+                            options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+                    })
+                    .ConfigureLogging(lf =>
+                    {
+                        lf.AddConsole(LogLevel.Warning);
+                    })
                     .UseStartup<Startup>()
                     .UseEnvironment("Testing"); // ensure ConfigureTesting is called in Startup
 
@@ -106,42 +266,6 @@ Add a filter to handle 404 policy
             {
                 Server.Dispose();
                 Client.Dispose();
-            }
-        }
-    }
-
-**ApiGuestbookControllerListShould**
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
-    using Xunit;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Moq;
-    using Newtonsoft.Json;
-
-    namespace CleanArchitecture.Tests.Integration.Web
-    {
-        public class ApiGuestbookControllerListShould : IClassFixture<TestServerFixture>
-        {
-            private readonly HttpClient _client;
-            public ApiGuestbookControllerListShould(TestServerFixture fixture)
-            {
-                _client = fixture.Client;
-            }
-
-            [Fact]
-            public async Task ReturnGuestbookWithOneItem()
-            {
-                var response = await _client.GetAsync("/api/guestbook/1");
-                response.EnsureSuccessStatusCode();
-                var stringResponse = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
-
-                Assert.Equal(1, result.Id);
-                Assert.Equal(1, result.Entries.Count());
-
             }
         }
     }

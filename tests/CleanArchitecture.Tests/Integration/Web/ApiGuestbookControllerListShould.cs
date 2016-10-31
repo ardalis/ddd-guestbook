@@ -1,5 +1,7 @@
-﻿using CleanArchitecture.Core.Entities;
+﻿using System;
+using CleanArchitecture.Core.Entities;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -7,25 +9,28 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
 using Newtonsoft.Json;
 
 namespace CleanArchitecture.Tests.Integration.Web
 {
+    [Collection("One")]
     public class ApiGuestbookControllerListShould : IClassFixture<TestServerFixture>
     {
-        private readonly HttpClient _client;
+        private readonly TestServerFixture _fixture;
+
         public ApiGuestbookControllerListShould(TestServerFixture fixture)
         {
-            _client = fixture.Client;
+            _fixture = fixture;
         }
 
         [Fact]
-        public async Task ReturnGuestbookWithOneItem()
+        public void ReturnGuestbookWithOneItem()
         {
-            var response = await _client.GetAsync("/api/guestbook/1");
+            var response = _fixture.Client.GetAsync("/api/guestbook/1").Result;
             response.EnsureSuccessStatusCode();
-            var stringResponse = await response.Content.ReadAsStringAsync();
+            var stringResponse = response.Content.ReadAsStringAsync().Result;
             var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
 
             Assert.Equal(1, result.Id);
@@ -33,12 +38,12 @@ namespace CleanArchitecture.Tests.Integration.Web
         }
 
         [Fact]
-        public async Task Return404GivenInvalidId()
+        public void Return404GivenInvalidId()
         {
-            var response = await _client.GetAsync("/api/guestbook/100");
+            var response = _fixture.Client.GetAsync("/api/guestbook/100").Result;
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            var stringResponse = await response.Content.ReadAsStringAsync();
+            var stringResponse = response.Content.ReadAsStringAsync().Result;
 
             Assert.Equal("100", stringResponse);
         }

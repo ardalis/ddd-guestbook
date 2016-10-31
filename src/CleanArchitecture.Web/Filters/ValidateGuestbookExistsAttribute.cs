@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore.Migrations;
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Entities;
 
@@ -22,7 +21,8 @@ namespace CleanArchitecture.Web.Filters
                 _guestbookRepository = guestbookRepository;
             }
 
-            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, 
+                ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
                 {

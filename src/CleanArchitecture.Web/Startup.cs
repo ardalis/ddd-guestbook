@@ -38,8 +38,9 @@ namespace CleanArchitecture.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseInMemoryDatabase());
+            // Moved to Program.cs
+            //services.AddDbContext<AppDbContext>(options =>
+            //    options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
             //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc();
@@ -81,31 +82,35 @@ namespace CleanArchitecture.Web
             PopulateTestData(app);
         }
 
-        private void PopulateTestData(IApplicationBuilder app)
+    private void PopulateTestData(IApplicationBuilder app)
+    {
+        var dbContext = app.ApplicationServices.GetService<AppDbContext>();
+
+        // reset the database
+        dbContext.Database.EnsureDeleted();
+
+        dbContext.ToDoItems.Add(new ToDoItem()
         {
-            var dbContext = app.ApplicationServices.GetService<AppDbContext>();
+            Title = "Test Item 1",
+            Description = "Test Description One"
+        });
+        dbContext.ToDoItems.Add(new ToDoItem()
+        {
+            Title = "Test Item 2",
+            Description = "Test Description Two"
+        });
+        dbContext.SaveChanges();
 
-            // reset the database
-            dbContext.Database.EnsureDeleted();
-
-            dbContext.ToDoItems.Add(new ToDoItem()
-            {
-                Title = "Test Item 1",
-                Description = "Test Description One"
-            });
-            dbContext.ToDoItems.Add(new ToDoItem()
-            {
-                Title = "Test Item 2",
-                Description = "Test Description Two"
-            });
-            dbContext.SaveChanges();
-
-            var guestbook = new Guestbook() { Name = "Test Guestbook" };
-            dbContext.Guestbooks.Add(guestbook);
-            guestbook.Entries.Add(new GuestbookEntry() { EmailAddress = "test@test.com", Message = "Test message" });
-            dbContext.SaveChanges();
-        }
-
+        // add Guestbook test data; specify Guestbook ID for use in tests
+        var guestbook = new Guestbook() { Name = "Test Guestbook", Id=1 };
+        dbContext.Guestbooks.Add(guestbook);
+        guestbook.Entries.Add(new GuestbookEntry()
+        {
+            EmailAddress = "test@test.com",
+            Message = "Test message"
+        });
+        dbContext.SaveChanges();
+    }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

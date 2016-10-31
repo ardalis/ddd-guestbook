@@ -44,7 +44,6 @@ namespace CleanArchitecture.Tests.Integration.Data
 
             Assert.Equal(item, newItem);
             Assert.True(newItem.Id > 0);
-
         }
 
         [Fact]
@@ -97,8 +96,6 @@ namespace CleanArchitecture.Tests.Integration.Data
             Assert.DoesNotContain(repository.List(), 
                 i => i.Title == initialTitle);
         }
-
-
 
         private EfRepository<ToDoItem> GetRepository()
         {
