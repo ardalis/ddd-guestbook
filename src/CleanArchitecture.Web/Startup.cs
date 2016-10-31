@@ -39,8 +39,8 @@ namespace CleanArchitecture.Web
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Moved to Program.cs
-            //services.AddDbContext<AppDbContext>(options =>
-            //    options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
             //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc();

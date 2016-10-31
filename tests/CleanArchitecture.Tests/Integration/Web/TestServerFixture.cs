@@ -22,11 +22,11 @@ namespace CleanArchitecture.Tests.Integration.Web
         {
             var builder = new WebHostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureServices(services =>
-                {
-                    services.AddDbContext<AppDbContext>(options =>
-                        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-                })
+                //.ConfigureServices(services =>
+                //{
+                //    services.AddDbContext<AppDbContext>(options =>
+                //        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+                //})
                 .ConfigureLogging(lf =>
                 {
                     lf.AddConsole(LogLevel.Warning);

@@ -18,11 +18,11 @@ namespace CleanArchitecture.Web
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
-                .ConfigureServices(services =>
-                {
-                    services.AddDbContext<AppDbContext>(options =>
-                        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-                })
+                //.ConfigureServices(services =>
+                //{
+                //    services.AddDbContext<AppDbContext>(options =>
+                //        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+                //})
                 .UseStartup<Startup>()
                 .Build();
 
