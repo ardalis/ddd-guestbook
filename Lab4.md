@@ -21,6 +21,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 
 ### Example
 
+```c#
     // GET: api/Guestbook/1
     [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
@@ -32,6 +33,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
         }
         return Ok(guestbook);
     }
+```
 
 - Add a new integration test class for the `GetById` method (in Tests/Integration/Web)
     - Use `ApiToDoItemsControllerListShould` as a reference
@@ -44,6 +46,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 
 ### Example
 
+```c#
     public class ApiGuestbookControllerListShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
@@ -76,9 +79,11 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
             Assert.Equal("100", stringResponse);
         }
     }
+```
 
 **In Startup.cs**
 
+```c#
     private void PopulateTestData(IApplicationBuilder app)
     {
         var dbContext = app.ApplicationServices.GetService<AppDbContext>();
@@ -108,7 +113,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
         });
         dbContext.SaveChanges();
     }
-
+```
 
 - Add an API method to record an entry to a Guestbook
     - Accept a Guestbook ID and a GuestbookEntry
@@ -122,6 +127,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 
 **In Api/GuestbookController.cs**
 
+```c#
     // POST: api/Guestbook/NewEntry
     [HttpPost("{id:int}/NewEntry")]
     public async Task<IActionResult> NewEntry(int id, [FromBody] GuestbookEntry entry)
@@ -132,9 +138,11 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 
         return Ok(guestbook);
     }
+```
 
 **ApiGuestbookControllerNewEntryShould.cs**
 
+```c#
     public class ApiGuestbookControllerNewEntryShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
@@ -174,6 +182,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
             Assert.True(result.Entries.Any(e => e.Message == message));
         }
     }
+```
 
 **Note:** If you get test failures due to no mail server being found, make sure you have smtp4dev / postman running.
 
@@ -189,6 +198,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 - Create a constructor that takes an `IGuestbookRepository`
 - Implement `OnActionExecutionAsync`:
 
+```c#
     public async Task OnActionExecutionAsync(ActionExecutingContext context, 
                                                 ActionExecutionDelegate next)
     {
@@ -206,6 +216,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
         }
         await next();
     }
+```
 
 - Add the attribute to the API action methods that should return 404 when no guestbook is found
     - `[VerifyGuestbookExists]`
@@ -217,6 +228,7 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 
 **TestServerFixture**
 
+```c#
     using System;
     using System.IO;
     using System.Net.Http;
@@ -269,3 +281,4 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
             }
         }
     }
+```
