@@ -16,11 +16,11 @@ Pull the filtering logic into its own type where it can be reused and tested.
 
 - Extract the querying/filtering logic from *GuestbookNotificationHandler*
     - Put it into a new *GuestbookNotificationPolicy* class
-- Create *ISpecification<T>* in Core/Interfaces
-    - One method: Expression<Func<T, bool>> Criteria { get; }
-- Have GuestbookNotificationPolicy implement ISpecification<GuestbookEntry> and implement the Criteria property
-- Add a List(Specification<T> spec) method to IRepository<T>
+- Create `ISpecification<T>` in Core/Interfaces
+    - One method: `Expression<Func<T, bool>> Criteria { get; }`
+- Have GuestbookNotificationPolicy implement `ISpecification<GuestbookEntry>` and implement the Criteria property
+- Add a `List(Specification<T> spec)` method to `IRepository<T>`
 - Implement the new List method in Infrastructure/EfRepository
-    - **Note:** The .Include() method doesn't support filtering. The simplest approach is to make two trips to the database. Add a DbSet<GuestbookEntry> to AppDbContext if necessary.
-- Write some unit tests for your new GuestbookNotificationPolicy to confirm it works as you expect
+    - **Note:** The `.Include()` method doesn't support filtering. The simplest approach is to make two trips to the database. Add a `DbSet<GuestbookEntry>` to AppDbContext if necessary.
+- Write some unit tests for your new `GuestbookNotificationPolicy` to confirm it works as you expect
 
