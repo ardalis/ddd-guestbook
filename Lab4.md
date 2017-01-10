@@ -8,7 +8,7 @@ Testing, xUnit, Filters
 
 ## Requirements
 
-The Guestbook needs to support mobile and/or rich client apps, and thus requires an API. The API needs to support two methods to start:
+The Guestbook needs to support mobile and/or rich client apps, and thus requires an API. The API needs to support two methods initially:
 
 - ListEntries: Should list the same entries as the current home page
 - AddEntry: Should add a new entry (just like the form on the current home page)
@@ -36,13 +36,13 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
 ```
 
 - Add a new integration test class for the `GetById` method (in Tests/Integration/Web)
-    - Use `ApiToDoItemsControllerListShould` as a reference
+    - Use `ApiToDoItemsControllerListShould` as a reference, if necessary
     - Add test data to Web/Startup.cs `PopulateTestData` method
         - Use ``Entries.Add`` instead of ``AddEntry`` when populating test data (this avoids throwing events)
         - Add one `Guestbook` with one test `GuestbookEntry`
         - Use a disposable TestServerFixture (sample at end of lab)
     - Confirm the 404 behavior
-    - Confirm entries are returned correctly
+    - Confirm entries are returned correctly (both the Guestbook and the GuestbookEntry)
 
 ### Example
 
@@ -71,12 +71,13 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
         [Fact]
         public void Return404GivenInvalidId()
         {
-            var response = _fixture.Client.GetAsync("/api/guestbook/100").Result;
+            string invalidId = "100";
+            var response = _fixture.Client.GetAsync($"/api/guestbook/{invalidId}").Result;
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var stringResponse = response.Content.ReadAsStringAsync().Result;
 
-            Assert.Equal("100", stringResponse);
+            Assert.Equal(invalidId.ToString(), stringResponse);
         }
     }
 ```
@@ -155,36 +156,38 @@ The Guestbook needs to support mobile and/or rich client apps, and thus requires
         [Fact]
         public void Return404GivenInvalidId()
         {
+            string invalidId = "100";
             var entryToPost = new { EmailAddress = "test@test.com", Message = "test" };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
                 "application/json");
-            var response = _fixture.Client.PostAsync("/api/guestbook/100/NewEntry", jsonContent).Result;
+            var response = _fixture.Client.PostAsync($"/api/guestbook/{invalidId}/NewEntry", jsonContent).Result;
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var stringResponse = response.Content.ReadAsStringAsync().Result;
 
-            Assert.Equal("100", stringResponse);
+            Assert.Equal(invalidId, stringResponse);
         }
 
         [Fact]
         public void ReturnGuestbookWithOneItem()
         {
+            int validId = 1;
             string message = Guid.NewGuid().ToString();
             var entryToPost = new { EmailAddress = "test@test.com", Message = message };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
                 "application/json");
-            var response = _fixture.Client.PostAsync("/api/guestbook/1/NewEntry", jsonContent).Result;
+            var response = _fixture.Client.PostAsync($"/api/guestbook/{validId}/NewEntry", jsonContent).Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
             var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
 
-            Assert.Equal(1, result.Id);
+            Assert.Equal(validId, result.Id);
             Assert.True(result.Entries.Any(e => e.Message == message));
         }
     }
 ```
 
-**Note:** If you get test failures due to no mail server being found, make sure you have smtp4dev / postman running.
+**Note:** If you get test failures due to no mail server being found, make sure you have smtp4dev / postman running. Otherwise, you may wish to configure your TestServer to use a different/mock implementation of `IMessageSender`.
 
 - Extract the 404 behavior into a new `VerifyGuestbookExistsAttribute`
 
