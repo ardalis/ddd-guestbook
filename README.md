@@ -4,6 +4,9 @@ Starts from the Clean Architecture repo, here: https://github.com/ardalis/CleanA
 
 ## Presentation Slides
 
+[2017 Codemash PreCompiler Slides]
+(https://www.dropbox.com/s/6rv7tijl1jnwjh6/Domain-Driven%20ASP.NET%20Core%20Applications.pdf?dl=0)
+
 [2016 October DevIntersection Workshop Slides](https://dl.dropboxusercontent.com/u/14515711/Domain-Driven%20ASP.NET%20Core%20Applications.pdf)
 
 ## Additional Training Resources
