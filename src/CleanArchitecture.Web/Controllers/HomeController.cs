@@ -12,11 +12,11 @@ namespace CleanArchitecture.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IRepository<Guestbook> _guestbookRepository;
+        private readonly IGuestbookRepository _guestbookRepository;
         private readonly IMessageSender _messageSender;
         private readonly IGuestbookService _guestbookService;
 
-        public HomeController(IRepository<Guestbook> guestbookRepository,
+        public HomeController(IGuestbookRepository guestbookRepository,
             IMessageSender messageSender,
             IGuestbookService guestbookService)
         {

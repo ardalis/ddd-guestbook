@@ -19,6 +19,7 @@ namespace CleanArchitecture.Infrastructure.Data
 
         public DbSet<ToDoItem> ToDoItems { get; set; }
         public DbSet<Guestbook> Guestbooks { get; set; }
+        public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
 
         public override int SaveChanges()
         {

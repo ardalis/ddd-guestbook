@@ -14,13 +14,20 @@ Pull the filtering logic into its own type where it can be reused and tested.
 
 ## Detailed Steps
 
-- Extract the querying/filtering logic from *GuestbookNotificationHandler*
-    - Put it into a new *GuestbookNotificationPolicy* class
 - Create `ISpecification<T>` in Core/Interfaces
     - One method: `Expression<Func<T, bool>> Criteria { get; }`
-- Have GuestbookNotificationPolicy implement `ISpecification<GuestbookEntry>` and implement the Criteria property
+- Extract the querying/filtering logic from *GuestbookNotificationHandler*
+    - Put it into a new *GuestbookNotificationPolicy* class
+- Have `GuestbookNotificationPolicy` implement `ISpecification<GuestbookEntry>` and implement the `Criteria` property
+- Add a `List<<GuestbookEntry>> ListEntries(Specification<<GuestbookEntry>> spec)` method to `GuestbookRepository`
+- Add the method to a new `IGuestbookRepository` interface that inherits from `IRepository<<Guestbook>>`
+- Add unit tests to confirm the criteria returns any entries within the last day
+- Add unit tests to confirm the criteria does not return the entry that triggered the notification
+    - You can pass in the `Id` of the entry to omit to the constructor of `GuestbookNotificationPolicy`
+
+Also (not used immediately):
 - Add a `List(Specification<T> spec)` method to `IRepository<T>`
-- Implement the new List method in Infrastructure/EfRepository
-    - **Note:** The `.Include()` method doesn't support filtering. The simplest approach is to make two trips to the database. Add a `DbSet<GuestbookEntry>` to AppDbContext if necessary.
-- Write some unit tests for your new `GuestbookNotificationPolicy` to confirm it works as you expect
+- Implement this new `List` method in Infrastructure/EfRepository
+
+**Note:** The `.Include()` method doesn't support filtering, which is why in this case we're adding another repository method to get entries separately from `Guestbook`. There are other approaches one could take to achieve this, but this is one of the simplest. Alternately, you could pass in a specification to the `GetById` method when fetching a `Guestbook` and use it to manually fetch its entries and add them to the instance.
 
