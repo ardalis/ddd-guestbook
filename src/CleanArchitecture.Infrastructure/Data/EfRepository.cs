@@ -26,6 +26,13 @@ namespace CleanArchitecture.Infrastructure.Data
             return _dbContext.Set<T>().ToList();
         }
 
+        public List<T> List(ISpecification<T> spec)
+        {
+            return _dbContext.Set<T>()
+                .Where(spec.Criteria)
+                .ToList();
+        }
+
         public T Add(T entity)
         {
             _dbContext.Set<T>().Add(entity);

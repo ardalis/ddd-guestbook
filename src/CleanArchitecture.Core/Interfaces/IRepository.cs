@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using CleanArchitecture.Core.Model;
 using CleanArchitecture.Core.SharedKernel;
 
 namespace CleanArchitecture.Core.Interfaces
@@ -8,6 +7,7 @@ namespace CleanArchitecture.Core.Interfaces
     {
         T GetById(int id);
         List<T> List();
+        List<T> List(ISpecification<T> spec);
         T Add(T entity);
         void Update(T entity);
         void Delete(T entity);
