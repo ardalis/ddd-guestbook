@@ -14,9 +14,9 @@ namespace CleanArchitecture.Web.Filters
 
         private class ValidateGuestbookExistsFilterImpl : IAsyncActionFilter
         {
-            private readonly IRepository<Guestbook> _guestbookRepository;
+            private readonly IGuestbookRepository _guestbookRepository;
 
-            public ValidateGuestbookExistsFilterImpl(IRepository<Guestbook> guestbookRepository)
+            public ValidateGuestbookExistsFilterImpl(IGuestbookRepository guestbookRepository)
             {
                 _guestbookRepository = guestbookRepository;
             }

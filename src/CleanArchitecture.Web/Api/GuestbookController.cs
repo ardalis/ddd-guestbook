@@ -15,9 +15,9 @@ namespace CleanArchitecture.Web.Api
     [ValidateGuestbookExists]
     public class GuestbookController : Controller
     {
-        private readonly IRepository<Guestbook> _guestbookRepository;
+        private readonly IGuestbookRepository _guestbookRepository;
 
-        public GuestbookController(IRepository<Guestbook> guestbookRepository)
+        public GuestbookController(IGuestbookRepository guestbookRepository)
         {
             _guestbookRepository = guestbookRepository;
         }
