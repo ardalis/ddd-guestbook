@@ -3,6 +3,7 @@ using System.Linq;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Events;
 using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Core.Specifications;
 
 namespace CleanArchitecture.Core.Handlers
 {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Xunit;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
+using Xunit;
 
 namespace CleanArchitecture.Tests.Integration.Data
 {
