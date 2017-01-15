@@ -21,6 +21,11 @@ namespace CleanArchitecture.Core
                     e.DateTimeCreated > DateTimeOffset.UtcNow.AddDays(-1)
                  && e.Id != _entryId;
             }
-        }   
+        }
+
+        public Expression<Func<GuestbookEntry, object>> Include
+        {
+            get { return e => e; }
+        }
     }
 }
