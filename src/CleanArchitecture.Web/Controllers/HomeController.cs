@@ -27,23 +27,28 @@ namespace CleanArchitecture.Web.Controllers
 
         public IActionResult Index()
         {
-            if (!_guestbookRepository.List().Any())
-            {
-                var newGuestbook = new Guestbook() {Name = "My Guestbook"};
-                newGuestbook.Entries.Add(new GuestbookEntry()
-                {
-                    EmailAddress = "steve@deviq.com",
-                    Message = "Hi!" });
-                _guestbookRepository.Add(newGuestbook);
-            }
+            InitializeData();
 
-            //var guestbook = _guestbookRepository.List().FirstOrDefault();
             var guestbook = _guestbookRepository.GetById(1);
             var viewModel = new HomePageViewModel();
             viewModel.GuestbookName = guestbook.Name;
             viewModel.PreviousEntries.AddRange(guestbook.Entries);
 
             return View(viewModel);
+        }
+
+        private void InitializeData()
+        {
+            if (!_guestbookRepository.List().Any())
+            {
+                var newGuestbook = new Guestbook() { Name = "My Guestbook" };
+                newGuestbook.Entries.Add(new GuestbookEntry()
+                {
+                    EmailAddress = "steve@deviq.com",
+                    Message = "Hi!"
+                });
+                _guestbookRepository.Add(newGuestbook);
+            }
         }
 
         [HttpPost]

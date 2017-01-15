@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitecture.Infrastructure.Data
@@ -12,11 +13,11 @@ namespace CleanArchitecture.Infrastructure.Data
         {
         }
 
-        // Since Guestbook is an Aggregate Root we need it to include its children
         public override Guestbook GetById(int id)
         {
+            var spec = new GuestbookWithEntriesSpec();
             return _dbContext.Guestbooks
-                .Include(g => g.Entries)
+                .Include(spec.Include)
                 .FirstOrDefault(g => g.Id == id);
         }
 

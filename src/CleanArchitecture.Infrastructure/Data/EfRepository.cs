@@ -18,7 +18,8 @@ namespace CleanArchitecture.Infrastructure.Data
 
         public virtual T GetById(int id)
         {
-            return _dbContext.Set<T>().SingleOrDefault(e => e.Id == id);
+            return _dbContext.Set<T>()
+                .SingleOrDefault(e => e.Id == id);
         }
 
         public List<T> List()
