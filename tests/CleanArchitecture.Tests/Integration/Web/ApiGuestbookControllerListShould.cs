@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CleanArchitecture.Web.ApiModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
 using Newtonsoft.Json;
@@ -31,7 +32,7 @@ namespace CleanArchitecture.Tests.Integration.Web
             var response = _fixture.Client.GetAsync("/api/guestbook/1").Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(1, result.Id);
             Assert.Equal(1, result.Entries.Count());

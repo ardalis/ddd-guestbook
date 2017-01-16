@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
 
 namespace CleanArchitecture.Tests.Integration.Web
@@ -47,7 +48,7 @@ namespace CleanArchitecture.Tests.Integration.Web
             var response = _fixture.Client.PostAsync("/api/guestbook/1/NewEntry", jsonContent).Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(1, result.Id);
             Assert.True(result.Entries.Any(e => e.Message == message));

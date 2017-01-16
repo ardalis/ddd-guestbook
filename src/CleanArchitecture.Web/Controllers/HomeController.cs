@@ -42,7 +42,7 @@ namespace CleanArchitecture.Web.Controllers
             if (!_guestbookRepository.List().Any())
             {
                 var newGuestbook = new Guestbook() { Name = "My Guestbook" };
-                newGuestbook.Entries.Add(new GuestbookEntry()
+                newGuestbook.AddEntry(new GuestbookEntry()
                 {
                     EmailAddress = "steve@deviq.com",
                     Message = "Hi!"

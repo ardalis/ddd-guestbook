@@ -5,6 +5,10 @@ using CleanArchitecture.Core.Interfaces;
 
 namespace CleanArchitecture.Core.Services
 {
+    // This code isn't used anywhere - it's an example
+    // of how you might perform the logic if you had an 
+    // anemic model (no logic in the entity itself and not 
+    // encapsulation of its state and properties)
     public class GuestbookService : IGuestbookService
     {
         private readonly IRepository<Guestbook> _guestbookRepository;
@@ -19,7 +23,7 @@ namespace CleanArchitecture.Core.Services
 
         public void RecordEntry(Guestbook guestbook, GuestbookEntry entry)
         {
-            guestbook.Entries.Add(entry);
+            guestbook.AddEntry(entry);
             _guestbookRepository.Update(guestbook);
 
             // send updates to previous entries made within last day

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.SharedKernel;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -38,6 +39,13 @@ namespace CleanArchitecture.Infrastructure.Data
                 }
             }
             return base.SaveChanges();
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var navigation = modelBuilder.Entity<Guestbook>().Metadata.FindNavigation(nameof(Guestbook.Entries));
+
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
