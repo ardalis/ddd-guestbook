@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>CleanArchitecture.Infrastructure</AssemblyName>
+    <PackageId>CleanArchitecture.Infrastructure</PackageId>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CleanArchitecture.Core\CleanArchitecture.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--<PackageReference Include="NETStandard.Library" Version="1.6.1" />-->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.2.0" />
+    <PackageReference Include="MailKit" Version="1.8.1" />
+  </ItemGroup>
+</Project>
