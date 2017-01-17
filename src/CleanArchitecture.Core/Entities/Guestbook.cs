@@ -7,8 +7,8 @@ namespace CleanArchitecture.Core.Entities
 {
     public class Guestbook : BaseEntity
     {
-        private readonly List<GuestbookEntry> _entries = new List<GuestbookEntry>(); 
         public string Name { get; set; }
+        private readonly List<GuestbookEntry> _entries = new List<GuestbookEntry>();
         public IEnumerable<GuestbookEntry> Entries => _entries.ToList();
 
         public void AddEntry(GuestbookEntry entry)
