@@ -28,7 +28,7 @@ namespace CleanArchitecture.Infrastructure.Data
                 .Select(e => e.Entity)
                 .Where(e => e.Events.Any())
                 .ToArray();
-
+            var result = base.SaveChanges();
             foreach (var entity in entitiesWithEvents)
             {
                 var events = entity.Events.ToArray();
@@ -38,7 +38,7 @@ namespace CleanArchitecture.Infrastructure.Data
                     _dispatcher.Dispatch(domainEvent);
                 }
             }
-            return base.SaveChanges();
+            return result;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
