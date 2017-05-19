@@ -43,7 +43,8 @@ namespace CleanArchitecture.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var navigation = modelBuilder.Entity<Guestbook>().Metadata.FindNavigation(nameof(Guestbook.Entries));
+            var navigation = modelBuilder.Entity<Guestbook>()
+                .Metadata.FindNavigation(nameof(Guestbook.Entries));
 
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
