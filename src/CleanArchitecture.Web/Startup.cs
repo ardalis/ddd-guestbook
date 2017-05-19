@@ -71,7 +71,7 @@ namespace CleanArchitecture.Web
             });
 
             return container.GetInstance<IServiceProvider>();
-            services.AddTransient<IRepository<ToDoItem>, EfRepository<ToDoItem>>();
+            //services.AddTransient<IRepository<ToDoItem>, EfRepository<ToDoItem>>();
         }
 
         public void ConfigureTesting(IApplicationBuilder app,

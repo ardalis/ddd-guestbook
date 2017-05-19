@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{106AE906-507
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B31B4797-1D9F-4288-808C-BE9A31A98C7D}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CleanArchitecture.Core", "src\CleanArchitecture.Core\CleanArchitecture.Core.xproj", "{AF4AB14A-200A-492B-AD62-E8D6F1AC8CC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Core", "src\CleanArchitecture.Core\CleanArchitecture.Core.csproj", "{AF4AB14A-200A-492B-AD62-E8D6F1AC8CC2}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CleanArchitecture.Infrastructure", "src\CleanArchitecture.Infrastructure\CleanArchitecture.Infrastructure.xproj", "{7262ED0F-C789-4014-BE31-E93D5869811E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Infrastructure", "src\CleanArchitecture.Infrastructure\CleanArchitecture.Infrastructure.csproj", "{7262ED0F-C789-4014-BE31-E93D5869811E}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CleanArchitecture.Tests", "tests\CleanArchitecture.Tests\CleanArchitecture.Tests.xproj", "{0F6A8976-F61A-4EB3-A38C-0A2ED39F157B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Tests", "tests\CleanArchitecture.Tests\CleanArchitecture.Tests.csproj", "{0F6A8976-F61A-4EB3-A38C-0A2ED39F157B}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CleanArchitecture.Web", "src\CleanArchitecture.Web\CleanArchitecture.Web.xproj", "{8EF3A9A7-6901-402A-B128-0072DA7BC880}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.Web", "src\CleanArchitecture.Web\CleanArchitecture.Web.csproj", "{8EF3A9A7-6901-402A-B128-0072DA7BC880}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A0F8671-8BB3-4DB7-80AF-994E4EDA08EC}"
 	ProjectSection(SolutionItems) = preProject

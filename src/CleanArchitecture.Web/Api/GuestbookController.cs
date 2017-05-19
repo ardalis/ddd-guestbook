@@ -31,18 +31,18 @@ namespace CleanArchitecture.Web.Api
             return Ok(dto);
         }
 
-    // POST: api/Guestbook/NewEntry
-    [HttpPost("{id:int}/NewEntry")]
-    public async Task<IActionResult> NewEntry(int id, [FromBody] GuestbookEntryDTO entry)
-    {
-        var guestbook = _guestbookRepository.GetById(id);
+        // POST: api/Guestbook/NewEntry
+        [HttpPost("{id:int}/NewEntry")]
+        public IActionResult NewEntry(int id, [FromBody] GuestbookEntryDTO entry)
+        {
+            var guestbook = _guestbookRepository.GetById(id);
 
-        var newEntry = entry.ToEntry();
-        guestbook.AddEntry(newEntry);
-        _guestbookRepository.Update(guestbook);
+            var newEntry = entry.ToEntry();
+            guestbook.AddEntry(newEntry);
+            _guestbookRepository.Update(guestbook);
 
-        var dto = GuestbookDTO.FromGuestbook(guestbook); 
-        return Ok(dto);
-    }
+            var dto = GuestbookDTO.FromGuestbook(guestbook);
+            return Ok(dto);
+        }
     }
 }
