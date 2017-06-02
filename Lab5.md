@@ -20,6 +20,7 @@ Pull the filtering logic into its own type where it can be reused and tested.
     - Put it into a new *GuestbookNotificationPolicy* class in a new Specifications folder in the Core project
 - Have `GuestbookNotificationPolicy` implement `ISpecification<GuestbookEntry>` and implement the `Criteria` property
 - Add a `List<GuestbookEntry> ListEntries(ISpecification<GuestbookEntry> spec)` method to `GuestbookRepository`
+    - Add a `public DbSet<GuestbookEntry> GuestbookEntries { get; set; }` to `AppDbContext`
 - Add the method to a new `IGuestbookRepository` interface that inherits from `IRepository<Guestbook>`
 - Add unit tests to confirm the criteria returns any entries within the last day
 - Add unit tests to confirm the criteria does not return the entry that triggered the notification
