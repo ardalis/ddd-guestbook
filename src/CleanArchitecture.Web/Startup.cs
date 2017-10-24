@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StructureMap;
 using CleanArchitecture.Core.Entities;
+using CleanArchitecture.Infrastructure.Services;
 
 namespace CleanArchitecture.Web
 {
@@ -47,6 +48,7 @@ namespace CleanArchitecture.Web
                 });
 
                 config.For<IRepository<Guestbook>>().Use<GuestbookRepository>();
+                config.For<IMessageSender>().Use<EmailMessageSenderService>();
 
                 // TODO: Add Registry Classes to eliminate reference to Infrastructure
 

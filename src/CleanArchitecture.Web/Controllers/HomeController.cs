@@ -11,10 +11,13 @@ namespace CleanArchitecture.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IRepository<Guestbook> _guestbookRepository;
+        private readonly IMessageSender _messageSender;
 
-        public HomeController(IRepository<Guestbook> guestbookRepository)
+        public HomeController(IRepository<Guestbook> guestbookRepository,
+            IMessageSender messageSender)
         {
             _guestbookRepository = guestbookRepository;
+            _messageSender = messageSender;
         }
 
         public IActionResult Index()
@@ -45,15 +48,7 @@ namespace CleanArchitecture.Web.Controllers
                 // notify all previous entries
                 foreach (var entry in guestbook.Entries)
                 {
-                    var message = new MailMessage();
-                    message.To.Add(new MailAddress("guestbook@whatever.com"));
-                    message.From = new MailAddress(entry.EmailAddress);
-                    message.Subject = "New guestbook entry added";
-                    message.Body =  model.NewEntry.Message ;
-                    using (var client = new SmtpClient("localhost",25))
-                    {
-                        client.Send(message);
-                    }
+                    _messageSender.SendGuestbookNotificationEmail(entry.EmailAddress, model.NewEntry.Message);
                 }
 
                 guestbook.Entries.Add(model.NewEntry);
