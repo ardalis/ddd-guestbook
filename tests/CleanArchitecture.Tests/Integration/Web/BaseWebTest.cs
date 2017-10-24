@@ -74,7 +74,7 @@ namespace CleanArchitecture.Tests.Integration.Web
             var directoryInfo = new DirectoryInfo(applicationBasePath);
             do
             {
-                var solutionFileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, "CleanArchitecture.sln"));
+                var solutionFileInfo = new FileInfo(Path.Combine(directoryInfo.FullName, "DDDGuestbook.sln"));
                 if (solutionFileInfo.Exists)
                 {
                     return Path.GetFullPath(Path.Combine(directoryInfo.FullName, solutionRelativePath, projectName));
