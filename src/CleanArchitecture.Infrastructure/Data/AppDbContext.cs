@@ -16,6 +16,7 @@ namespace CleanArchitecture.Infrastructure.Data
             _dispatcher = dispatcher;
         }
 
+        public DbSet<Guestbook> Guestbooks { get; set; }
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
         public override int SaveChanges()

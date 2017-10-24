@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StructureMap;
+using CleanArchitecture.Core.Entities;
 
 namespace CleanArchitecture.Web
 {
@@ -44,7 +45,9 @@ namespace CleanArchitecture.Web
                     _.WithDefaultConventions();
                     _.ConnectImplementationsToTypesClosing(typeof(IHandle<>));
                 });
-                
+
+                config.For<IRepository<Guestbook>>().Use<GuestbookRepository>();
+
                 // TODO: Add Registry Classes to eliminate reference to Infrastructure
 
                 // TODO: Move to Infrastucture Registry
