@@ -4,6 +4,7 @@ using CleanArchitecture.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Net.Mail;
 
 namespace CleanArchitecture.Web.Controllers
 {
@@ -40,6 +41,21 @@ namespace CleanArchitecture.Web.Controllers
             if (ModelState.IsValid)
             {
                 var guestbook = _guestbookRepository.GetById(1);
+
+                // notify all previous entries
+                foreach (var entry in guestbook.Entries)
+                {
+                    var message = new MailMessage();
+                    message.To.Add(new MailAddress("guestbook@whatever.com"));
+                    message.From = new MailAddress(entry.EmailAddress);
+                    message.Subject = "New guestbook entry added";
+                    message.Body =  model.NewEntry.Message ;
+                    using (var client = new SmtpClient("localhost",25))
+                    {
+                        client.Send(message);
+                    }
+                }
+
                 guestbook.Entries.Add(model.NewEntry);
                 _guestbookRepository.Update(guestbook);
 
