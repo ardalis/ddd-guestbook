@@ -1,31 +1,24 @@
-﻿using System;
+﻿using CleanArchitecture.Core.Entities;
+using CleanArchitecture.Web;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Xunit;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using CleanArchitecture.Infrastructure.Data;
-using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Events;
-using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Web;
-using Newtonsoft.Json;
+using Xunit;
 
 namespace CleanArchitecture.Tests.Integration.Web
 {
-    public class ApiToDoItemsControllerListShould : IClassFixture<TestServerFixture>
-    {
-        private readonly HttpClient _client;
-        public ApiToDoItemsControllerListShould(TestServerFixture fixture)
-        {
-            _client = fixture.Client;
-        }
 
+    public class ApiToDoItemsControllerList : BaseWebTest
+    {
         [Fact]
-        public async Task ReturnTwoItems()
+        public async Task ReturnsTwoItems()
         {
-            Debug.WriteLine("ReturnTwoItems-Start");
             var response = await _client.GetAsync("/api/todoitems");
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
@@ -34,7 +27,6 @@ namespace CleanArchitecture.Tests.Integration.Web
             Assert.Equal(2, result.Count());
             Assert.Equal(1, result.Count(a => a.Title == "Test Item 1"));
             Assert.Equal(1, result.Count(a => a.Title == "Test Item 2"));
-            Debug.WriteLine("ReturnTwoItems-End");
         }
     }
 }

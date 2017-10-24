@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CleanArchitecture.Core.Entities;
+﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace CleanArchitecture.Web.Controllers
 {
@@ -47,7 +44,7 @@ namespace CleanArchitecture.Web.Controllers
                 Title = "Run and Review Tests",
                 Description = "Make sure all the tests run and review what they are doing."
             });
-            return 3;
+            return _todoRepository.List().Count;
         }
     }
 }

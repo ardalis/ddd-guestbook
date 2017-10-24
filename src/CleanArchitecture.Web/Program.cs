@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using CleanArchitecture.Infrastructure.Data;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
 
 namespace CleanArchitecture.Web
 {
@@ -14,19 +7,12 @@ namespace CleanArchitecture.Web
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                //.ConfigureServices(services =>
-                //{
-                //    services.AddDbContext<AppDbContext>(options =>
-                //        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-                //})
+            BuildWebHost(args).Run();
+        }
+
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .Build();
-
-            host.Run();
-        }
     }
 }
