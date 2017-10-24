@@ -4,20 +4,19 @@ using CleanArchitecture.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using System.Net.Mail;
 
 namespace CleanArchitecture.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IRepository<Guestbook> _guestbookRepository;
-        private readonly IMessageSender _messageSender;
+        private readonly IGuestbookService _guestbookService;
 
         public HomeController(IRepository<Guestbook> guestbookRepository,
-            IMessageSender messageSender)
+            IGuestbookService guestbookService)
         {
             _guestbookRepository = guestbookRepository;
-            _messageSender = messageSender;
+            _guestbookService = guestbookService;
         }
 
         public IActionResult Index()
@@ -45,14 +44,7 @@ namespace CleanArchitecture.Web.Controllers
             {
                 var guestbook = _guestbookRepository.GetById(1);
 
-                // notify all previous entries
-                foreach (var entry in guestbook.Entries)
-                {
-                    _messageSender.SendGuestbookNotificationEmail(entry.EmailAddress, model.NewEntry.Message);
-                }
-
-                guestbook.Entries.Add(model.NewEntry);
-                _guestbookRepository.Update(guestbook);
+                _guestbookService.RecordEntry(guestbook, model.NewEntry);
 
                 model.PreviousEntries.Clear();
                 model.PreviousEntries.AddRange(guestbook.Entries);
