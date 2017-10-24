@@ -2,12 +2,12 @@
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace CleanArchitecture.Web.Api
 {
     [Route("api/[controller]")]
     [ValidateModel]
+    [VerifyGuestbookExists]
     public class GuestbookController : Controller
     {
         private readonly IRepository<Guestbook> _guestbookRepository;
@@ -21,10 +21,6 @@ namespace CleanArchitecture.Web.Api
         public IActionResult GetById(int id)
         {
             var guestbook = _guestbookRepository.GetById(id);
-            if (guestbook == null)
-            {
-                return NotFound(id);
-            }
             return Ok(guestbook);
         }
 
@@ -32,10 +28,6 @@ namespace CleanArchitecture.Web.Api
         public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
         {
             var guestbook = _guestbookRepository.GetById(id);
-            if (guestbook == null)
-            {
-                return NotFound(id);
-            }
             guestbook.AddEntry(entry);
             _guestbookRepository.Update(guestbook);
 
