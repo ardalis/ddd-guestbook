@@ -1,31 +1,18 @@
-﻿using System;
-using System.Linq.Expressions;
-using CleanArchitecture.Core.Entities;
+﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
+using System;
+using System.Linq.Expressions;
 
 namespace CleanArchitecture.Core.Specifications
 {
     public class GuestbookNotificationPolicy : ISpecification<GuestbookEntry>
     {
-        private readonly int _entryId;
-
-        public GuestbookNotificationPolicy(int entryId)
+        public GuestbookNotificationPolicy(int entryAddedId = 0)
         {
-            _entryId = entryId;
+            Criteria = e =>
+                e.DateTimeCreated > DateTimeOffset.UtcNow.AddDays(-1) // created after 1 day ago
+                && e.Id != entryAddedId; // don't notify the added entry
         }
-
-        public Expression<Func<GuestbookEntry, bool>> Criteria {
-            get
-            {
-                return e => 
-                    e.DateTimeCreated > DateTimeOffset.UtcNow.AddDays(-1)
-                 && e.Id != _entryId;
-            }
-        }
-
-        public Expression<Func<GuestbookEntry, object>> Include
-        {
-            get { return e => e; }
-        }
+        public Expression<Func<GuestbookEntry, bool>> Criteria { get; }
     }
 }

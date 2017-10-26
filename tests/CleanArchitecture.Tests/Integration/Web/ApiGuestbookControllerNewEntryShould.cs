@@ -1,57 +1,45 @@
-﻿using System;
-using CleanArchitecture.Core.Entities;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using System.Linq;
+﻿using CleanArchitecture.Core.Entities;
+using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using CleanArchitecture.Web.ApiModels;
-using Newtonsoft.Json;
+using Xunit;
 
 namespace CleanArchitecture.Tests.Integration.Web
 {
-    [Collection("One")]
-    public class ApiGuestbookControllerNewEntryShould : IClassFixture<TestServerFixture>
+    public class ApiGuestbookControllerNewEntryShould : BaseWebTest
     {
-        private readonly TestServerFixture _fixture;
-        //private readonly HttpClient _client;
-        public ApiGuestbookControllerNewEntryShould(TestServerFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
         [Fact]
         public void Return404GivenInvalidId()
         {
+            string invalidId = "100";
             var entryToPost = new { EmailAddress = "test@test.com", Message = "test" };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
                 "application/json");
-            var response = _fixture.Client.PostAsync("/api/guestbook/100/NewEntry", jsonContent).Result;
+            var response = _client.PostAsync($"/api/guestbook/{invalidId}/NewEntry", jsonContent).Result;
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var stringResponse = response.Content.ReadAsStringAsync().Result;
 
-            Assert.Equal("100", stringResponse);
+            Assert.Equal(invalidId, stringResponse);
         }
 
         [Fact]
         public void ReturnGuestbookWithOneItem()
         {
+            int validId = 1;
             string message = Guid.NewGuid().ToString();
             var entryToPost = new { EmailAddress = "test@test.com", Message = message };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
                 "application/json");
-            var response = _fixture.Client.PostAsync("/api/guestbook/1/NewEntry", jsonContent).Result;
+            var response = _client.PostAsync($"/api/guestbook/{validId}/NewEntry", jsonContent).Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
+            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
 
-            Assert.Equal(1, result.Id);
-            Assert.True(result.Entries.Any(e => e.Message == message));
+            Assert.Equal(validId, result.Id);
+            Assert.Contains(result.Entries, e => e.Message == message);
         }
     }
 }

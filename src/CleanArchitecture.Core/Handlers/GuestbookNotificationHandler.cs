@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
-using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Events;
+﻿using CleanArchitecture.Core.Events;
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Specifications;
+using System.Linq;
 
 namespace CleanArchitecture.Core.Handlers
 {
@@ -21,12 +19,16 @@ namespace CleanArchitecture.Core.Handlers
 
         public void Handle(EntryAddedEvent entryAddedEvent)
         {
-            var emailsToNotify = _guestbookRepository.ListEntries(
-                new GuestbookNotificationPolicy(entryAddedEvent.GuestbookId))
+            var guestbook = _guestbookRepository.GetById(entryAddedEvent.GuestbookId);
+            var notificationPolicy = new GuestbookNotificationPolicy(entryAddedEvent.Entry.Id);
+
+            // send updates to previous entries made in the last day
+            var emailsToNotify = _guestbookRepository.ListEntries(notificationPolicy)
                 .Select(e => e.EmailAddress);
-            foreach (var emailAddress in emailsToNotify)
+
+            foreach(var emailAddress in emailsToNotify)
             {
-                string messageBody = "{entry.EmailAddress} left new message {entry.Message}";
+                string messageBody = $"{entryAddedEvent.Entry.EmailAddress} left a new message {entryAddedEvent.Entry.Message}.";
                 _messageSender.SendGuestbookNotificationEmail(emailAddress, messageBody);
             }
         }

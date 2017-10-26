@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CleanArchitecture.Core.Entities;
+﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Web.ApiModels;
 using CleanArchitecture.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,37 +7,31 @@ namespace CleanArchitecture.Web.Api
 {
     [Route("api/[controller]")]
     [ValidateModel]
-    [ValidateGuestbookExists]
+    [VerifyGuestbookExists]
     public class GuestbookController : Controller
     {
-        private readonly IGuestbookRepository _guestbookRepository;
+        private readonly IRepository<Guestbook> _guestbookRepository;
 
-        public GuestbookController(IGuestbookRepository guestbookRepository)
+        public GuestbookController(IRepository<Guestbook> guestbookRepository)
         {
             _guestbookRepository = guestbookRepository;
         }
 
-        // GET: api/Guestbook/1
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
             var guestbook = _guestbookRepository.GetById(id);
-            var dto = GuestbookDTO.FromGuestbook(guestbook);
-            return Ok(dto);
+            return Ok(guestbook);
         }
 
-        // POST: api/Guestbook/NewEntry
         [HttpPost("{id:int}/NewEntry")]
-        public IActionResult NewEntry(int id, [FromBody] GuestbookEntryDTO entry)
+        public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
         {
             var guestbook = _guestbookRepository.GetById(id);
-
-            var newEntry = entry.ToEntry();
-            guestbook.AddEntry(newEntry);
+            guestbook.AddEntry(entry);
             _guestbookRepository.Update(guestbook);
 
-            var dto = GuestbookDTO.FromGuestbook(guestbook);
-            return Ok(dto);
+            return Ok(guestbook);
         }
     }
 }

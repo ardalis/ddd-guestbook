@@ -1,10 +1,8 @@
 ﻿using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.SharedKernel;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -18,17 +16,20 @@ namespace CleanArchitecture.Infrastructure.Data
             _dispatcher = dispatcher;
         }
 
-        public DbSet<ToDoItem> ToDoItems { get; set; }
         public DbSet<Guestbook> Guestbooks { get; set; }
         public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
+        public DbSet<ToDoItem> ToDoItems { get; set; }
 
         public override int SaveChanges()
         {
+            int result = base.SaveChanges();
+
+            // dispatch events only if save was successful
             var entitiesWithEvents = ChangeTracker.Entries<BaseEntity>()
                 .Select(e => e.Entity)
                 .Where(e => e.Events.Any())
                 .ToArray();
-            var result = base.SaveChanges();
+
             foreach (var entity in entitiesWithEvents)
             {
                 var events = entity.Events.ToArray();
@@ -38,15 +39,8 @@ namespace CleanArchitecture.Infrastructure.Data
                     _dispatcher.Dispatch(domainEvent);
                 }
             }
+
             return result;
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            var navigation = modelBuilder.Entity<Guestbook>()
-                .Metadata.FindNavigation(nameof(Guestbook.Entries));
-
-            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

@@ -1,4 +1,3 @@
-{
-  "parallelizeAssembly": false,
-  "parallelizeTestCollections": false
+﻿{
+  "shadowCopy": false
 }

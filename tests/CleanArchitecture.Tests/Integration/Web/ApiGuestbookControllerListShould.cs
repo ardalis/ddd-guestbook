@@ -1,38 +1,21 @@
-﻿using System;
-using CleanArchitecture.Core.Entities;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+﻿using CleanArchitecture.Core.Entities;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using CleanArchitecture.Web.ApiModels;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Moq;
-using Newtonsoft.Json;
+using Xunit;
 
 namespace CleanArchitecture.Tests.Integration.Web
 {
-    [Collection("One")]
-    public class ApiGuestbookControllerListShould : IClassFixture<TestServerFixture>
+
+    public class ApiGuestbookControllerListShould : BaseWebTest
     {
-        private readonly TestServerFixture _fixture;
-
-        public ApiGuestbookControllerListShould(TestServerFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
         [Fact]
         public void ReturnGuestbookWithOneItem()
         {
-            var response = _fixture.Client.GetAsync("/api/guestbook/1").Result;
+            var response = _client.GetAsync("/api/guestbook/1").Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
+            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
 
             Assert.Equal(1, result.Id);
             Assert.Equal(1, result.Entries.Count());
@@ -41,12 +24,13 @@ namespace CleanArchitecture.Tests.Integration.Web
         [Fact]
         public void Return404GivenInvalidId()
         {
-            var response = _fixture.Client.GetAsync("/api/guestbook/100").Result;
+            string invalidId = "100";
+            var response = _client.GetAsync($"/api/guestbook/{invalidId}").Result;
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var stringResponse = response.Content.ReadAsStringAsync().Result;
 
-            Assert.Equal("100", stringResponse);
+            Assert.Equal(invalidId.ToString(), stringResponse);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "DDD Guestbook";
+    ViewData["Title"] = "Clean DDD Architecture Sample";
 }
 @model CleanArchitecture.Web.ViewModels.HomePageViewModel
 
@@ -32,11 +32,11 @@
 
 <h3>Messages:</h3>
 <ol class="round">
-    @if (!Model.PreviousEntries.Any())
+    @if(!Model.PreviousEntries.Any())
     {
         <li class="zero">
             <h5>No Messages</h5>
-            Nobody has left any messages.  How sad. :(
+            Nobody has left any messages. How sad. :(
         </li>
     }
     @foreach (var entry in Model.PreviousEntries.OrderByDescending(p => p.DateTimeCreated))
@@ -45,5 +45,6 @@
             <h5>@entry.EmailAddress - @entry.DateTimeCreated</h5>
             @entry.Message
         </li>
+
     }
 </ol>

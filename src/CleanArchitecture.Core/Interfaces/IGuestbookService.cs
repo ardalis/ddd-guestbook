@@ -4,6 +4,6 @@ namespace CleanArchitecture.Core.Interfaces
 {
     public interface IGuestbookService
     {
-        void RecordEntry(Guestbook guestbook, GuestbookEntry entry);
+        void RecordEntry(Guestbook guestbook, GuestbookEntry newEntry);
     }
 }

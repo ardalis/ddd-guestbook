@@ -15,4 +15,5 @@ namespace CleanArchitecture.Core.Entities
             Events.Add(new ToDoItemCompletedEvent(this));
         }
     }
+
 }

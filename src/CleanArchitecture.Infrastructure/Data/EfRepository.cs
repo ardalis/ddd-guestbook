@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.Model;
 using CleanArchitecture.Core.SharedKernel;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -18,21 +17,12 @@ namespace CleanArchitecture.Infrastructure.Data
 
         public virtual T GetById(int id)
         {
-            return _dbContext.Set<T>()
-                .SingleOrDefault(e => e.Id == id);
+            return _dbContext.Set<T>().SingleOrDefault(e => e.Id == id);
         }
 
         public List<T> List()
         {
             return _dbContext.Set<T>().ToList();
-        }
-
-        public List<T> List(ISpecification<T> spec)
-        {
-            return _dbContext.Set<T>()
-                .Include(spec.Include)
-                .Where(spec.Criteria)
-                .ToList();
         }
 
         public T Add(T entity)

@@ -1,9 +1,8 @@
+﻿using CleanArchitecture.Core.Entities;
+using CleanArchitecture.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.Specifications;
-using Microsoft.EntityFrameworkCore;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -15,9 +14,8 @@ namespace CleanArchitecture.Infrastructure.Data
 
         public override Guestbook GetById(int id)
         {
-            var spec = new GuestbookWithEntriesSpec();
             return _dbContext.Guestbooks
-                .Include(spec.Include)
+                .Include(g => g.Entries)
                 .FirstOrDefault(g => g.Id == id);
         }
 

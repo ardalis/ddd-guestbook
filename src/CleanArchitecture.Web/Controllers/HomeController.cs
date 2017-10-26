@@ -1,54 +1,37 @@
-﻿using System;
-using System.Linq;
-using CleanArchitecture.Core.Entities;
+﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Web.ViewModels;
-using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Migrations;
-using MimeKit;
+using System;
+using System.Linq;
 
 namespace CleanArchitecture.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IGuestbookRepository _guestbookRepository;
-        private readonly IMessageSender _messageSender;
-        private readonly IGuestbookService _guestbookService;
+        private readonly IRepository<Guestbook> _guestbookRepository;
 
-        public HomeController(IGuestbookRepository guestbookRepository,
-            IMessageSender messageSender,
-            IGuestbookService guestbookService)
+        public HomeController(IRepository<Guestbook> guestbookRepository)
         {
             _guestbookRepository = guestbookRepository;
-            _messageSender = messageSender;
-            _guestbookService = guestbookService;
         }
 
         public IActionResult Index()
         {
-            InitializeData();
-
-            var guestbook = _guestbookRepository.GetById(1);
-            var viewModel = new HomePageViewModel();
-            viewModel.GuestbookName = guestbook.Name;
-            viewModel.PreviousEntries.AddRange(guestbook.Entries);
-
-            return View(viewModel);
-        }
-
-        private void InitializeData()
-        {
             if (!_guestbookRepository.List().Any())
             {
                 var newGuestbook = new Guestbook() { Name = "My Guestbook" };
-                newGuestbook.AddEntry(new GuestbookEntry()
-                {
-                    EmailAddress = "steve@deviq.com",
-                    Message = "Hi!"
-                });
+                newGuestbook.Entries.Add(new GuestbookEntry { EmailAddress = "steve@deviq.com", Message = "Hi!", DateTimeCreated = DateTime.UtcNow.AddHours(-2) });
+                newGuestbook.Entries.Add(new GuestbookEntry { EmailAddress = "mark@deviq.com", Message = "Hi again!", DateTimeCreated = DateTime.UtcNow.AddHours(-1) });
+                newGuestbook.Entries.Add(new GuestbookEntry { EmailAddress = "michelle@deviq.com", Message = "Hello!" });
                 _guestbookRepository.Add(newGuestbook);
             }
+
+            var guestbook = _guestbookRepository.GetById(1); // hardcoded for this sample; could support multi-tenancy in real app
+            var viewModel = new HomePageViewModel();
+            viewModel.GuestbookName = guestbook.Name;
+            viewModel.PreviousEntries.AddRange(guestbook.Entries);
+            return View(viewModel);
         }
 
         [HttpPost]
