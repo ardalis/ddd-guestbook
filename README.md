@@ -1,6 +1,10 @@
 # Domain-Driven Design Guestbook
+
 A series of labs for workshops given by [Steve Smith / @ardalis](http://ardalis.com) for clients and conference attendees.
 Starts from the Clean Architecture repo, here: https://github.com/ardalis/CleanArchitecture
+Last updated October 2017 for .NET Core 2.0.
+
+See also [Steve's ASP.NET Core Quick Start course from DevIQ](http://aspnetcorequickstart.com).
 
 ## Presentation Slides
 
@@ -13,3 +17,4 @@ Starts from the Clean Architecture repo, here: https://github.com/ardalis/CleanA
 - [Domain-Driven Design Fundamentals](https://www.pluralsight.com/courses/domain-driven-design-fundamentals) (Pluralsight)
 - Custom Team Workshops - Onsite or Remote - [Contact Steve](http://ardalis.com/contact)
 - [Steve's Weekly Tip Email Signup](http://ardalis.com/tips)
+- [Steve's Weekly Dev Tips podcast](http://www.weeklydevtips.com)
