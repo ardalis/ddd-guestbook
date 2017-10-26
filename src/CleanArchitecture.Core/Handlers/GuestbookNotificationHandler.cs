@@ -1,17 +1,16 @@
-﻿using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Events;
+﻿using CleanArchitecture.Core.Events;
 using CleanArchitecture.Core.Interfaces;
-using System;
+using CleanArchitecture.Core.Specifications;
 using System.Linq;
 
 namespace CleanArchitecture.Core.Handlers
 {
     public class GuestbookNotificationHandler : IHandle<EntryAddedEvent>
     {
-        private readonly IRepository<Guestbook> _guestbookRepository;
+        private readonly IGuestbookRepository _guestbookRepository;
         private readonly IMessageSender _messageSender;
 
-        public GuestbookNotificationHandler(IRepository<Guestbook> guestbookRepository,
+        public GuestbookNotificationHandler(IGuestbookRepository guestbookRepository,
             IMessageSender messageSender)
         {
             _guestbookRepository = guestbookRepository;
@@ -21,10 +20,10 @@ namespace CleanArchitecture.Core.Handlers
         public void Handle(EntryAddedEvent entryAddedEvent)
         {
             var guestbook = _guestbookRepository.GetById(entryAddedEvent.GuestbookId);
+            var notificationPolicy = new GuestbookNotificationPolicy(entryAddedEvent.Entry.Id);
 
             // send updates to previous entries made in the last day
-            var emailsToNotify = guestbook.Entries
-                .Where(e => e.DateTimeCreated > DateTimeOffset.UtcNow.AddDays(-1))
+            var emailsToNotify = _guestbookRepository.ListEntries(notificationPolicy)
                 .Select(e => e.EmailAddress);
 
             foreach(var emailAddress in emailsToNotify)
