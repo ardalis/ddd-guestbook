@@ -1,6 +1,5 @@
-﻿using CleanArchitecture.Core.Entities;
+﻿using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
-using System.Linq;
 using System.Net;
 using Xunit;
 
@@ -15,10 +14,10 @@ namespace CleanArchitecture.Tests.Integration.Web
             var response = _client.GetAsync("/api/guestbook/1").Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(1, result.Id);
-            Assert.Equal(1, result.Entries.Count());
+            Assert.Single(result.Entries);
         }
 
         [Fact]
@@ -30,7 +29,7 @@ namespace CleanArchitecture.Tests.Integration.Web
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             var stringResponse = response.Content.ReadAsStringAsync().Result;
 
-            Assert.Equal(invalidId.ToString(), stringResponse);
+            Assert.Equal(invalidId, stringResponse);
         }
     }
 }

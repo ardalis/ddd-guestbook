@@ -21,16 +21,24 @@ namespace CleanArchitecture.Web.Controllers
             if (!_guestbookRepository.List().Any())
             {
                 var newGuestbook = new Guestbook() { Name = "My Guestbook" };
-                newGuestbook.Entries.Add(new GuestbookEntry { EmailAddress = "steve@deviq.com", Message = "Hi!", DateTimeCreated = DateTime.UtcNow.AddHours(-2) });
-                newGuestbook.Entries.Add(new GuestbookEntry { EmailAddress = "mark@deviq.com", Message = "Hi again!", DateTimeCreated = DateTime.UtcNow.AddHours(-1) });
-                newGuestbook.Entries.Add(new GuestbookEntry { EmailAddress = "michelle@deviq.com", Message = "Hello!" });
+                newGuestbook.AddEntry(new GuestbookEntry { EmailAddress = "steve@deviq.com", Message = "Hi!", DateTimeCreated = DateTime.UtcNow.AddHours(-2) });
+                newGuestbook.AddEntry(new GuestbookEntry { EmailAddress = "mark@deviq.com", Message = "Hi again!", DateTimeCreated = DateTime.UtcNow.AddHours(-1) });
+                newGuestbook.AddEntry(new GuestbookEntry { EmailAddress = "michelle@deviq.com", Message = "Hello!" });
+                newGuestbook.Events.Clear();
                 _guestbookRepository.Add(newGuestbook);
             }
 
             var guestbook = _guestbookRepository.GetById(1); // hardcoded for this sample; could support multi-tenancy in real app
             var viewModel = new HomePageViewModel();
             viewModel.GuestbookName = guestbook.Name;
-            viewModel.PreviousEntries.AddRange(guestbook.Entries);
+            viewModel.PreviousEntries.AddRange(guestbook.Entries
+                .Select(e => new ApiModels.GuestbookEntryDTO {
+                    DateTimeCreated = e.DateTimeCreated,
+                    EmailAddress =e.EmailAddress,
+                    Id = e.Id,
+                    Message = e.Message
+                })
+            );
             return View(viewModel);
         }
 
@@ -40,11 +48,23 @@ namespace CleanArchitecture.Web.Controllers
             if (ModelState.IsValid)
             {
                 var guestbook = _guestbookRepository.GetById(1);
-                guestbook.AddEntry(model.NewEntry);
+                guestbook.AddEntry(new GuestbookEntry()
+                {
+                    EmailAddress = model.NewEntry.EmailAddress,
+                    Message = model.NewEntry.Message
+                });
                 _guestbookRepository.Update(guestbook);
 
                 model.PreviousEntries.Clear();
-                model.PreviousEntries.AddRange(guestbook.Entries);
+                model.PreviousEntries.AddRange(guestbook.Entries
+                                    .Select(e => new ApiModels.GuestbookEntryDTO
+                                    {
+                                        DateTimeCreated = e.DateTimeCreated,
+                                        EmailAddress = e.EmailAddress,
+                                        Id = e.Id,
+                                        Message = e.Message
+                                    })
+                );
             }
             return View(model);
         }
