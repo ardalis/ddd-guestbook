@@ -1,6 +1,7 @@
 ﻿using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.SharedKernel;
 using CleanArchitecture.Infrastructure.Data;
+using CleanArchitecture.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -64,6 +65,7 @@ namespace CleanArchitecture.Web
 
                 // TODO: Move to Infrastucture Registry
                 config.For<IRepository>().Add<EfRepository>();
+                config.For<IMessageSender>().Use<EmailMessageSenderService>();
 
                 //Populate the container using the service collection
                 config.Populate(services);

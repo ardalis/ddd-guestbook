@@ -5,17 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 
 namespace CleanArchitecture.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IRepository _repository;
+        private readonly IMessageSender _messageSender;
 
-        public HomeController(IRepository repository)
+        public HomeController(IRepository repository, IMessageSender messageSender)
         {
             _repository = repository;
+            _messageSender = messageSender;
         }
 
         public IActionResult Index()
@@ -52,15 +53,7 @@ namespace CleanArchitecture.Web.Controllers
                 // notify all previous entries
                 foreach (var entry in guestbook.Entries)
                 {
-                    var message = new MailMessage();
-                    message.To.Add(new MailAddress(entry.EmailAddress));
-                    message.From = new MailAddress("guestbook@whatever.com");
-                    message.Subject = "New guestbook entry added";
-                    message.Body = model.NewEntry.Message;
-                    using (var client = new SmtpClient("localhost", 25))
-                    {
-                        client.Send(message);
-                    }
+                    _messageSender.SendGuestbookNotificationEmail(entry.EmailAddress, model.NewEntry.Message);
                 }
 
                 guestbook.Entries.Add(model.NewEntry);
