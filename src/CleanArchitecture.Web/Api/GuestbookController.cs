@@ -7,6 +7,7 @@ namespace CleanArchitecture.Web.Api
 {
     [Route("api/[controller]")]
     [ValidateModel]
+    [VerifyGuestbookExists]
     public class GuestbookController : Controller
     {
         private readonly IRepository _repository;
@@ -20,10 +21,6 @@ namespace CleanArchitecture.Web.Api
         public IActionResult GetById(int id)
         {
             var guestbook = _repository.GetById<Guestbook>(id);
-            if (guestbook == null)
-            {
-                return NotFound(id);
-            }
             var entries = _repository.List<GuestbookEntry>();
             guestbook.Entries.Clear();
             guestbook.Entries.AddRange(entries);
@@ -34,10 +31,6 @@ namespace CleanArchitecture.Web.Api
         public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
         {
             var guestbook = _repository.GetById<Guestbook>(id);
-            if (guestbook == null)
-            {
-                return NotFound(id);
-            }
             var entries = _repository.List<GuestbookEntry>();
             guestbook.Entries.Clear();
             guestbook.Entries.AddRange(entries);
