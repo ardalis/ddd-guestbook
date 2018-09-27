@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 
 namespace CleanArchitecture.Web.Controllers
 {
@@ -47,6 +48,21 @@ namespace CleanArchitecture.Web.Controllers
                 List<GuestbookEntry> guestbookEntries = _repository.List<GuestbookEntry>();
                 guestbook.Entries.Clear();
                 guestbook.Entries.AddRange(guestbookEntries); // maintain existing Guestbook Entries
+
+                // notify all previous entries
+                foreach (var entry in guestbook.Entries)
+                {
+                    var message = new MailMessage();
+                    message.To.Add(new MailAddress(entry.EmailAddress));
+                    message.From = new MailAddress("guestbook@whatever.com");
+                    message.Subject = "New guestbook entry added";
+                    message.Body = model.NewEntry.Message;
+                    using (var client = new SmtpClient("localhost", 25))
+                    {
+                        client.Send(message);
+                    }
+                }
+
                 guestbook.Entries.Add(model.NewEntry);
                 _repository.Update(guestbook);
 
