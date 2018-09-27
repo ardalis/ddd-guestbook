@@ -11,12 +11,12 @@ namespace CleanArchitecture.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IRepository _repository;
-        private readonly IMessageSender _messageSender;
+        private readonly IGuestbookService _guestbookService;
 
-        public HomeController(IRepository repository, IMessageSender messageSender)
+        public HomeController(IRepository repository, IGuestbookService guestbookService)
         {
             _repository = repository;
-            _messageSender = messageSender;
+            _guestbookService = guestbookService;
         }
 
         public IActionResult Index()
@@ -50,14 +50,7 @@ namespace CleanArchitecture.Web.Controllers
                 guestbook.Entries.Clear();
                 guestbook.Entries.AddRange(guestbookEntries); // maintain existing Guestbook Entries
 
-                // notify all previous entries
-                foreach (var entry in guestbook.Entries)
-                {
-                    _messageSender.SendGuestbookNotificationEmail(entry.EmailAddress, model.NewEntry.Message);
-                }
-
-                guestbook.Entries.Add(model.NewEntry);
-                _repository.Update(guestbook);
+                _guestbookService.RecordEntry(guestbook, model.NewEntry);
 
                 model.PreviousEntries.Clear();
                 model.PreviousEntries.AddRange(guestbook.Entries);
