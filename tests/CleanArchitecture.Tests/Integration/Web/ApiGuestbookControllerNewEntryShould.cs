@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Core.Entities;
+﻿using CleanArchitecture.Web;
 using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
 using System;
@@ -9,8 +9,15 @@ using Xunit;
 
 namespace CleanArchitecture.Tests.Integration.Web
 {
-    public class ApiGuestbookControllerNewEntryShould : BaseWebTest
+    public class ApiGuestbookControllerNewEntryShould : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
+        private readonly HttpClient _client;
+
+        public ApiGuestbookControllerNewEntryShould(CustomWebApplicationFactory<Startup> factory)
+        {
+            _client = factory.CreateClient();
+        }
+
         [Fact]
         public void Return404GivenInvalidId()
         {
@@ -27,7 +34,7 @@ namespace CleanArchitecture.Tests.Integration.Web
         }
 
         [Fact]
-        public void ReturnGuestbookWithOneItem()
+        public void ReturnGuestbookWithNewItem()
         {
             int validId = 1;
             string message = Guid.NewGuid().ToString();

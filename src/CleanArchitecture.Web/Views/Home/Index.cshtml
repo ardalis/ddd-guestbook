@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Clean DDD Architecture Sample";
+    ViewData["Title"] = "DDD Guestbook";
 }
 @model CleanArchitecture.Web.ViewModels.HomePageViewModel
 
@@ -32,7 +32,7 @@
 
 <h3>Messages:</h3>
 <ol class="round">
-    @if(!Model.PreviousEntries.Any())
+    @if (!Model.PreviousEntries.Any())
     {
         <li class="zero">
             <h5>No Messages</h5>

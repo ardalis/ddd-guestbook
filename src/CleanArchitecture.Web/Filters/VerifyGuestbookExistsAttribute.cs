@@ -9,28 +9,26 @@ namespace CleanArchitecture.Web.Filters
     public class VerifyGuestbookExistsAttribute : TypeFilterAttribute
     {
         public VerifyGuestbookExistsAttribute() : base(typeof(VerifyGuestbookExistsFilter))
-        {
-        }
+        { }
 
         private class VerifyGuestbookExistsFilter : IAsyncActionFilter
         {
-            private readonly IRepository<Guestbook> _guestbookRepository;
+            private readonly IRepository _repository;
 
-            public VerifyGuestbookExistsFilter(IRepository<Guestbook> guestbookRepository)
+            public VerifyGuestbookExistsFilter(IRepository repository)
             {
-                _guestbookRepository = guestbookRepository;
+                _repository = repository;
             }
 
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
                 {
-                    var id = context.ActionArguments["id"] as int?;
-                    if (id.HasValue)
+                    if (context.ActionArguments["id"] is int id)
                     {
-                        if ((_guestbookRepository.GetById(id.Value)) == null)
+                        if (_repository.GetById<Guestbook>(id) == null)
                         {
-                            context.Result = new NotFoundObjectResult(id.Value);
+                            context.Result = new NotFoundObjectResult(id);
                             return;
                         }
                     }

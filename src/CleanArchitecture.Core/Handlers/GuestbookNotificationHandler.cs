@@ -7,26 +7,23 @@ namespace CleanArchitecture.Core.Handlers
 {
     public class GuestbookNotificationHandler : IHandle<EntryAddedEvent>
     {
-        private readonly IGuestbookRepository _guestbookRepository;
+        private readonly IRepository _repository;
         private readonly IMessageSender _messageSender;
 
-        public GuestbookNotificationHandler(IGuestbookRepository guestbookRepository,
-            IMessageSender messageSender)
+        public GuestbookNotificationHandler(IRepository repository, IMessageSender messageSender)
         {
-            _guestbookRepository = guestbookRepository;
+            _repository = repository;
             _messageSender = messageSender;
         }
 
         public void Handle(EntryAddedEvent entryAddedEvent)
         {
-            var guestbook = _guestbookRepository.GetById(entryAddedEvent.GuestbookId);
             var notificationPolicy = new GuestbookNotificationPolicy(entryAddedEvent.Entry.Id);
 
             // send updates to previous entries made in the last day
-            var emailsToNotify = _guestbookRepository.ListEntries(notificationPolicy)
-                .Select(e => e.EmailAddress);
+            var emailsToNotify = _repository.List(notificationPolicy).Select(e => e.EmailAddress);
 
-            foreach(var emailAddress in emailsToNotify)
+            foreach (var emailAddress in emailsToNotify)
             {
                 string messageBody = $"{entryAddedEvent.Entry.EmailAddress} left a new message {entryAddedEvent.Entry.Message}.";
                 _messageSender.SendGuestbookNotificationEmail(emailAddress, messageBody);

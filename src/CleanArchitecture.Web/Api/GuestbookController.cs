@@ -10,26 +10,26 @@ namespace CleanArchitecture.Web.Api
     [VerifyGuestbookExists]
     public class GuestbookController : Controller
     {
-        private readonly IRepository<Guestbook> _guestbookRepository;
+        private readonly IRepository _repository;
 
-        public GuestbookController(IRepository<Guestbook> guestbookRepository)
+        public GuestbookController(IRepository repository)
         {
-            _guestbookRepository = guestbookRepository;
+            _repository = repository;
         }
 
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
-            var guestbook = _guestbookRepository.GetById(id);
+            var guestbook = _repository.GetById<Guestbook>(id);
             return Ok(guestbook);
         }
 
         [HttpPost("{id:int}/NewEntry")]
         public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
         {
-            var guestbook = _guestbookRepository.GetById(id);
+            var guestbook = _repository.GetById<Guestbook>(id);
             guestbook.AddEntry(entry);
-            _guestbookRepository.Update(guestbook);
+            _repository.Update(guestbook);
 
             return Ok(guestbook);
         }

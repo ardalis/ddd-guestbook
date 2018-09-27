@@ -1,6 +1,4 @@
-﻿using CleanArchitecture.Core.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq.Expressions;
 
 namespace CleanArchitecture.Core.Interfaces

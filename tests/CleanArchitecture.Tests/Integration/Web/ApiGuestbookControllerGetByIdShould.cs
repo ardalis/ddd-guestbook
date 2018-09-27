@@ -1,13 +1,21 @@
-﻿using CleanArchitecture.Web.ApiModels;
+﻿using CleanArchitecture.Web;
+using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http;
 using Xunit;
 
 namespace CleanArchitecture.Tests.Integration.Web
 {
-
-    public class ApiGuestbookControllerListShould : BaseWebTest
+    public class ApiGuestbookControllerGetByIdShould : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
+        private readonly HttpClient _client;
+
+        public ApiGuestbookControllerGetByIdShould(CustomWebApplicationFactory<Startup> factory)
+        {
+            _client = factory.CreateClient();
+        }
+
         [Fact]
         public void ReturnGuestbookWithOneItem()
         {

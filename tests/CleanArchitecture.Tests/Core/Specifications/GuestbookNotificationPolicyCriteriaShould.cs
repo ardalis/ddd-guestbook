@@ -1,12 +1,11 @@
 ﻿using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Events;
 using CleanArchitecture.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace CleanArchitecture.Tests.Core.Entities
+namespace CleanArchitecture.Tests.Core.Specifications
 {
     public class GuestbookNotificationPolicyCriteriaShould
     {
@@ -19,6 +18,7 @@ namespace CleanArchitecture.Tests.Core.Entities
             entries.Add(new GuestbookEntry { Id = 4, DateTimeCreated = DateTime.UtcNow.AddDays(-1).AddSeconds(-1), EmailAddress = "test4@test.com", Message = "4" });
             return entries;
         }
+
         [Fact]
         public void NotIncludeEntryTriggeringNotification()
         {
@@ -47,10 +47,11 @@ namespace CleanArchitecture.Tests.Core.Entities
             var entries = TestEntries();
             var spec = new GuestbookNotificationPolicy(1);
 
-            var entriesToNotify = entries.Where(spec.Criteria.Compile());
+            var entriesToNotify = entries.Where(spec.Criteria.Compile()).ToList();
 
             Assert.NotNull(entriesToNotify.SingleOrDefault(e => e.Id == 2));
             Assert.NotNull(entriesToNotify.SingleOrDefault(e => e.Id == 3));
         }
     }
+
 }

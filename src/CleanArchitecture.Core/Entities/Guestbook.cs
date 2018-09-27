@@ -10,11 +10,7 @@ namespace CleanArchitecture.Core.Entities
         public string Name { get; set; }
 
         private readonly List<GuestbookEntry> _entries = new List<GuestbookEntry>();
-
-        public IEnumerable<GuestbookEntry> Entries
-        {
-            get { return new ReadOnlyCollection<GuestbookEntry>(_entries); }
-        }
+        public IEnumerable<GuestbookEntry> Entries => new ReadOnlyCollection<GuestbookEntry>(_entries);
 
         public void AddEntry(GuestbookEntry entry)
         {

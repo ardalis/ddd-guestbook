@@ -13,6 +13,7 @@ namespace CleanArchitecture.Core.Specifications
                 e.DateTimeCreated > DateTimeOffset.UtcNow.AddDays(-1) // created after 1 day ago
                 && e.Id != entryAddedId; // don't notify the added entry
         }
+
         public Expression<Func<GuestbookEntry, bool>> Criteria { get; }
     }
 }

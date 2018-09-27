@@ -1,8 +1,8 @@
-﻿using CleanArchitecture.Core.Interfaces;
+﻿using CleanArchitecture.Core.Entities;
+using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Core.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.SharedKernel;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -19,14 +19,6 @@ namespace CleanArchitecture.Infrastructure.Data
         public DbSet<Guestbook> Guestbooks { get; set; }
         public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
         public DbSet<ToDoItem> ToDoItems { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            var navigation = modelBuilder.Entity<Guestbook>()
-                .Metadata.FindNavigation(nameof(Guestbook.Entries));
-
-            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
-        }
 
         public override int SaveChanges()
         {
@@ -49,6 +41,14 @@ namespace CleanArchitecture.Infrastructure.Data
             }
 
             return result;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var navigation = modelBuilder.Entity<Guestbook>()
+                .Metadata.FindNavigation(nameof(Guestbook.Entries));
+
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }
