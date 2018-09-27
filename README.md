@@ -2,7 +2,7 @@
 
 A series of labs for workshops given by [Steve Smith / @ardalis](http://ardalis.com) for clients and conference attendees.
 Starts from the Clean Architecture repo, here: https://github.com/ardalis/CleanArchitecture
-Last updated October 2017 for .NET Core 2.0.
+Last updated September 2018 for .NET Core 2.1.
 
 See also [Steve's ASP.NET Core Quick Start course from DevIQ](http://aspnetcorequickstart.com).
 
