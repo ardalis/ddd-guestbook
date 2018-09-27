@@ -4,7 +4,6 @@ using CleanArchitecture.Web.ApiModels;
 using CleanArchitecture.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -12,19 +11,19 @@ namespace CleanArchitecture.Web.Api
     [ValidateModel]
     public class ToDoItemsController : Controller
     {
-        private readonly IRepository<ToDoItem> _todoRepository;
+        private readonly IRepository _repository;
 
-        public ToDoItemsController(IRepository<ToDoItem> todoRepository)
+        public ToDoItemsController(IRepository repository)
         {
-            _todoRepository = todoRepository;
+            _repository = repository;
         }
 
         // GET: api/ToDoItems
         [HttpGet]
         public IActionResult List()
         {
-            var items = _todoRepository.List()
-                            .Select(item => ToDoItemDTO.FromToDoItem(item));
+            var items = _repository.List<ToDoItem>()
+                            .Select(ToDoItemDTO.FromToDoItem);
             return Ok(items);
         }
 
@@ -32,20 +31,31 @@ namespace CleanArchitecture.Web.Api
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
-            var item = ToDoItemDTO.FromToDoItem(_todoRepository.GetById(id));
+            var item = ToDoItemDTO.FromToDoItem(_repository.GetById<ToDoItem>(id));
             return Ok(item);
         }
 
         // POST: api/ToDoItems
-        public async Task<IActionResult> Post([FromBody] ToDoItemDTO item)
+        [HttpPost]
+        public IActionResult Post([FromBody] ToDoItemDTO item)
         {
             var todoItem = new ToDoItem()
             {
                 Title = item.Title,
                 Description = item.Description
             };
-            _todoRepository.Add(todoItem);
+            _repository.Add(todoItem);
             return Ok(ToDoItemDTO.FromToDoItem(todoItem));
+        }
+
+        [HttpPatch("{id:int}/complete")]
+        public IActionResult Complete(int id)
+        {
+            var toDoItem = _repository.GetById<ToDoItem>(id);
+            toDoItem.MarkComplete();
+            _repository.Update(toDoItem);
+
+            return Ok(ToDoItemDTO.FromToDoItem(toDoItem));
         }
     }
 }
