@@ -21,9 +21,6 @@ namespace CleanArchitecture.Web.Api
         public IActionResult GetById(int id)
         {
             var guestbook = _repository.GetById<Guestbook>(id);
-            var entries = _repository.List<GuestbookEntry>();
-            guestbook.Entries.Clear();
-            guestbook.Entries.AddRange(entries);
             return Ok(guestbook);
         }
 
@@ -31,9 +28,6 @@ namespace CleanArchitecture.Web.Api
         public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
         {
             var guestbook = _repository.GetById<Guestbook>(id);
-            var entries = _repository.List<GuestbookEntry>();
-            guestbook.Entries.Clear();
-            guestbook.Entries.AddRange(entries);
             guestbook.AddEntry(entry);
             _repository.Update(guestbook);
 

@@ -42,5 +42,13 @@ namespace CleanArchitecture.Infrastructure.Data
 
             return result;
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var navigation = modelBuilder.Entity<Guestbook>()
+                .Metadata.FindNavigation(nameof(Guestbook.Entries));
+
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+        }
     }
 }

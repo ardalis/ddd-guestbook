@@ -1,5 +1,5 @@
-﻿using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Web;
+﻿using CleanArchitecture.Web;
+using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
@@ -22,7 +22,7 @@ namespace CleanArchitecture.Tests.Integration.Web
             var response = _client.GetAsync("/api/guestbook/1").Result;
             response.EnsureSuccessStatusCode();
             var stringResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(1, result.Id);
             Assert.Single(result.Entries);
