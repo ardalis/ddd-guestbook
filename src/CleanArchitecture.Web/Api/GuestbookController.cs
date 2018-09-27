@@ -29,5 +29,22 @@ namespace CleanArchitecture.Web.Api
             guestbook.Entries.AddRange(entries);
             return Ok(guestbook);
         }
+
+        [HttpPost("{id:int}/NewEntry")]
+        public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
+        {
+            var guestbook = _repository.GetById<Guestbook>(id);
+            if (guestbook == null)
+            {
+                return NotFound(id);
+            }
+            var entries = _repository.List<GuestbookEntry>();
+            guestbook.Entries.Clear();
+            guestbook.Entries.AddRange(entries);
+            guestbook.AddEntry(entry);
+            _repository.Update(guestbook);
+
+            return Ok(guestbook);
+        }
     }
 }
