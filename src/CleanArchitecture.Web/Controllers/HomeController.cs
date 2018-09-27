@@ -11,12 +11,10 @@ namespace CleanArchitecture.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IRepository _repository;
-        private readonly IGuestbookService _guestbookService;
 
-        public HomeController(IRepository repository, IGuestbookService guestbookService)
+        public HomeController(IRepository repository)
         {
             _repository = repository;
-            _guestbookService = guestbookService;
         }
 
         public IActionResult Index()
@@ -50,7 +48,8 @@ namespace CleanArchitecture.Web.Controllers
                 guestbook.Entries.Clear();
                 guestbook.Entries.AddRange(guestbookEntries); // maintain existing Guestbook Entries
 
-                _guestbookService.RecordEntry(guestbook, model.NewEntry);
+                guestbook.AddEntry(model.NewEntry);
+                _repository.Update(guestbook);
 
                 model.PreviousEntries.Clear();
                 model.PreviousEntries.AddRange(guestbook.Entries);
