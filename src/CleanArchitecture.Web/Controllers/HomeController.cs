@@ -45,7 +45,7 @@ namespace CleanArchitecture.Web.Controllers
             if (ModelState.IsValid)
             {
                 var guestbook = _repository.GetById<Guestbook>(1, "Entries");
-                guestbook.Entries.Add(model.NewEntry);
+                guestbook.AddEntry(model.NewEntry);
                 _repository.Update(guestbook);
 
                 model.GuestbookName = guestbook.Name;
