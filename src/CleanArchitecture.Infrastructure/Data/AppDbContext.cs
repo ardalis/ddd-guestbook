@@ -1,8 +1,11 @@
-﻿using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.SharedKernel;
+﻿using CleanArchitecture.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using CleanArchitecture.Core.Entities;
+using CleanArchitecture.Core.SharedKernel;
+using Ardalis.EFCore.Extensions;
+using System.Reflection;
+using JetBrains.Annotations;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -10,19 +13,34 @@ namespace CleanArchitecture.Infrastructure.Data
     {
         private readonly IDomainEventDispatcher _dispatcher;
 
+        //public AppDbContext(DbContextOptions options) : base(options)
+        //{
+        //}
+
         public AppDbContext(DbContextOptions<AppDbContext> options, IDomainEventDispatcher dispatcher)
             : base(options)
         {
             _dispatcher = dispatcher;
         }
 
-        public DbSet<Guestbook> Guestbooks { get; set; }
-        public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
         public DbSet<ToDoItem> ToDoItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
+
+            // alternately this is built-in to EF Core 2.2
+            //modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
 
         public override int SaveChanges()
         {
             int result = base.SaveChanges();
+
+            // ignore events if no dispatcher provided
+            if (_dispatcher == null) return result;
 
             // dispatch events only if save was successful
             var entitiesWithEvents = ChangeTracker.Entries<BaseEntity>()
@@ -41,14 +59,6 @@ namespace CleanArchitecture.Infrastructure.Data
             }
 
             return result;
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            var navigation = modelBuilder.Entity<Guestbook>()
-                .Metadata.FindNavigation(nameof(Guestbook.Entries));
-
-            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

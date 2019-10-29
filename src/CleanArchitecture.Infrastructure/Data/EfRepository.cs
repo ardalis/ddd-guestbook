@@ -1,5 +1,4 @@
-﻿using CleanArchitecture.Core.Entities;
-using CleanArchitecture.Core.Interfaces;
+﻿using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -18,25 +17,12 @@ namespace CleanArchitecture.Infrastructure.Data
 
         public T GetById<T>(int id) where T : BaseEntity
         {
-            if (typeof(T) == typeof(Guestbook))
-            {
-                return _dbContext.Set<Guestbook>().Include(g => g.Entries).SingleOrDefault(e => e.Id == id) as T;
-            }
             return _dbContext.Set<T>().SingleOrDefault(e => e.Id == id);
         }
 
-        public List<T> List<T>(ISpecification<T> spec = null) where T : BaseEntity
+        public List<T> List<T>() where T : BaseEntity
         {
-            if (typeof(T) == typeof(Guestbook))
-            {
-                return _dbContext.Set<Guestbook>().Include(g => g.Entries).ToList() as List<T>;
-            }
-            var query = _dbContext.Set<T>().AsQueryable();
-            if (spec != null)
-            {
-                query = query.Where(spec.Criteria);
-            }
-            return query.ToList();
+            return _dbContext.Set<T>().ToList();
         }
 
         public T Add<T>(T entity) where T : BaseEntity
