@@ -53,6 +53,16 @@ namespace CleanArchitecture.Web
             dbContext.ToDoItems.Add(ToDoItem3);
 
             dbContext.SaveChanges();
+
+            // add Guestbook test data; specify Guestbook ID for use in tests
+            var guestbook = new Guestbook() { Name = "Test Guestbook", Id = 1 };
+            dbContext.Guestbooks.Add(guestbook);
+            guestbook.Entries.Add(new GuestbookEntry()
+            {
+                EmailAddress = "test@test.com",
+                Message = "Test message"
+            });
+            dbContext.SaveChanges();
         }
     }
 }
