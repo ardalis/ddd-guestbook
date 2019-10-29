@@ -4,8 +4,6 @@ using System.Linq;
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.SharedKernel;
 using Ardalis.EFCore.Extensions;
-using System.Reflection;
-using JetBrains.Annotations;
 
 namespace CleanArchitecture.Infrastructure.Data
 {
@@ -23,6 +21,7 @@ namespace CleanArchitecture.Infrastructure.Data
             _dispatcher = dispatcher;
         }
 
+        public DbSet<Guestbook> Guestbooks { get; set; }
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
