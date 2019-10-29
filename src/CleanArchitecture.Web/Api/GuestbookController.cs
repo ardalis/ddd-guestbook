@@ -1,5 +1,6 @@
 ﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Web.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitecture.Web.Api
@@ -15,25 +16,18 @@ namespace CleanArchitecture.Web.Api
 
         // GET: api/Guestbook/1
         [HttpGet("{id:int}")]
+        [VerifyGuestbookExists]
         public IActionResult GetById(int id)
         {
             var guestbook = _repository.GetById<Guestbook>(id, "Entries");
-            if (guestbook is null)
-            {
-                return NotFound(id);
-            }
-
             return Ok(guestbook);
         }
 
         [HttpPost("{id:int}/NewEntry")]
+        [VerifyGuestbookExists]
         public IActionResult NewEntry(int id, [FromBody] GuestbookEntry entry)
         {
             var guestbook = _repository.GetById<Guestbook>(id, "Entries");
-            if (guestbook is null)
-            {
-                return NotFound(id);
-            }
 
             guestbook.AddEntry(entry);
             _repository.Update(guestbook);
