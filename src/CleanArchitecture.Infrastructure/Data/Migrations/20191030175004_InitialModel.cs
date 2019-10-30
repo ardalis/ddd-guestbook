@@ -43,7 +43,7 @@ namespace CleanArchitecture.Infrastructure.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     EmailAddress = table.Column<string>(nullable: true),
                     Message = table.Column<string>(nullable: true),
-                    DateTimeCreated = table.Column<DateTimeOffset>(nullable: false),
+                    DateTimeCreated = table.Column<DateTime>(nullable: false),
                     GuestbookId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
