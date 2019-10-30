@@ -27,9 +27,14 @@ namespace CleanArchitecture.Infrastructure.Data
                 .SingleOrDefault(e => e.Id == id);
         }
 
-        public List<T> List<T>() where T : BaseEntity
+        public List<T> List<T>(ISpecification<T> spec = null) where T : BaseEntity
         {
-            return _dbContext.Set<T>().ToList();
+            var query = _dbContext.Set<T>().AsQueryable();
+            if (spec != null)
+            {
+                query = query.Where(spec.Criteria);
+            }
+            return query.ToList();
         }
 
         public T Add<T>(T entity) where T : BaseEntity
