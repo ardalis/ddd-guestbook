@@ -36,7 +36,7 @@ namespace CleanArchitecture.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GuestbookEntry",
+                name: "GuestbookEntries",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -48,9 +48,9 @@ namespace CleanArchitecture.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GuestbookEntry", x => x.Id);
+                    table.PrimaryKey("PK_GuestbookEntries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GuestbookEntry_Guestbooks_GuestbookId",
+                        name: "FK_GuestbookEntries_Guestbooks_GuestbookId",
                         column: x => x.GuestbookId,
                         principalTable: "Guestbooks",
                         principalColumn: "Id",
@@ -58,15 +58,15 @@ namespace CleanArchitecture.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GuestbookEntry_GuestbookId",
-                table: "GuestbookEntry",
+                name: "IX_GuestbookEntries_GuestbookId",
+                table: "GuestbookEntries",
                 column: "GuestbookId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GuestbookEntry");
+                name: "GuestbookEntries");
 
             migrationBuilder.DropTable(
                 name: "ToDoItems");

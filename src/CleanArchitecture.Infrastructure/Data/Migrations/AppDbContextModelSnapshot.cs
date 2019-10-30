@@ -52,7 +52,7 @@ namespace CleanArchitecture.Infrastructure.Data.Migrations
 
                     b.HasIndex("GuestbookId");
 
-                    b.ToTable("GuestbookEntry");
+                    b.ToTable("GuestbookEntries");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Core.Entities.ToDoItem", b =>

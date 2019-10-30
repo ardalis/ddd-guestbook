@@ -22,6 +22,7 @@ namespace CleanArchitecture.Infrastructure.Data
         }
 
         public DbSet<Guestbook> Guestbooks { get; set; }
+        public DbSet<GuestbookEntry> GuestbookEntries { get; set; }
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

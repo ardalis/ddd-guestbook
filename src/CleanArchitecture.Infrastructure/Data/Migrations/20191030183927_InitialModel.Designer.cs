@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CleanArchitecture.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191030175004_InitialModel")]
+    [Migration("20191030183927_InitialModel")]
     partial class InitialModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace CleanArchitecture.Infrastructure.Data.Migrations
 
                     b.HasIndex("GuestbookId");
 
-                    b.ToTable("GuestbookEntry");
+                    b.ToTable("GuestbookEntries");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Core.Entities.ToDoItem", b =>
