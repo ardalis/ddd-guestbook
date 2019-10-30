@@ -1,5 +1,6 @@
 ﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Web.ApiModels;
 using CleanArchitecture.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,10 +23,10 @@ namespace CleanArchitecture.Web.Controllers
             {
                 var newGuesbook = new Guestbook { Name = "My Guestbook" };
 
-                newGuesbook.Entries.Add(new GuestbookEntry { EmailAddress = "steve@deviq.com", Message = "Hi!", DateTimeCreated = DateTime.UtcNow.AddHours(-2) });
-                newGuesbook.Entries.Add(new GuestbookEntry { EmailAddress = "mark@deviq.com", Message = "Hi again!", DateTimeCreated = DateTime.UtcNow.AddHours(-1) });
-                newGuesbook.Entries.Add(new GuestbookEntry { EmailAddress = "michelle@deviq.com", Message = "Hello!" });
-                
+                newGuesbook.AddEntry(new GuestbookEntry { EmailAddress = "steve@deviq.com", Message = "Hi!", DateTimeCreated = DateTime.UtcNow.AddHours(-2) });
+                newGuesbook.AddEntry(new GuestbookEntry { EmailAddress = "mark@deviq.com", Message = "Hi again!", DateTimeCreated = DateTime.UtcNow.AddHours(-1) });
+                newGuesbook.AddEntry(new GuestbookEntry { EmailAddress = "michelle@deviq.com", Message = "Hello!" });
+                newGuesbook.Events.Clear();
                 _repository.Add(newGuesbook);
             }
 
@@ -33,7 +34,14 @@ namespace CleanArchitecture.Web.Controllers
             
             var viewModel = new HomePageViewModel();
             viewModel.GuestbookName = guestbook.Name;
-            viewModel.PreviousEntries.AddRange(guestbook.Entries);
+            viewModel.PreviousEntries.AddRange(guestbook.Entries
+                .Select(e => new GuestbookEntryDTO 
+                {
+                    DateTimeCreated = e.DateTimeCreated,
+                    EmailAddress = e.EmailAddress,
+                    Id = e.Id,
+                    Message = e.Message
+                }));
 
             return View(viewModel);
         }
@@ -45,11 +53,24 @@ namespace CleanArchitecture.Web.Controllers
             if (ModelState.IsValid)
             {
                 var guestbook = _repository.GetById<Guestbook>(1, "Entries");
-                guestbook.AddEntry(model.NewEntry);
+                guestbook.AddEntry(new GuestbookEntry
+                {
+                    DateTimeCreated = model.NewEntry.DateTimeCreated,
+                    EmailAddress = model.NewEntry.EmailAddress,
+                    Message = model.NewEntry.Message,
+                    Id = model.NewEntry.Id
+                });
                 _repository.Update(guestbook);
 
                 model.GuestbookName = guestbook.Name;
-                model.PreviousEntries.AddRange(guestbook.Entries);
+                model.PreviousEntries.AddRange(guestbook.Entries
+                .Select(e => new GuestbookEntryDTO
+                {
+                    DateTimeCreated = e.DateTimeCreated,
+                    EmailAddress = e.EmailAddress,
+                    Id = e.Id,
+                    Message = e.Message
+                }));
             }
 
             return View(model);

@@ -1,5 +1,6 @@
 ﻿using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Web;
+using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
@@ -23,7 +24,7 @@ namespace CleanArchitecture.FunctionalTests.Api
             var response = await _client.GetAsync("/api/guestbook/1");
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<Guestbook>(stringResponse);
+            var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(1, result.Id);
             Assert.Single(result.Entries);

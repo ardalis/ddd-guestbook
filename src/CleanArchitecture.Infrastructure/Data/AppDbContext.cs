@@ -31,6 +31,10 @@ namespace CleanArchitecture.Infrastructure.Data
 
             modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
 
+            var navigation = modelBuilder.Entity<Guestbook>()
+                .Metadata.FindNavigation(nameof(Guestbook.Entries));
+
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
             // alternately this is built-in to EF Core 2.2
             //modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
