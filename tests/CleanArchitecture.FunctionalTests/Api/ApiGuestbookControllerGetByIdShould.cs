@@ -1,11 +1,13 @@
-﻿using CleanArchitecture.Web;
+﻿using CleanArchitecture.Core.Entities;
+using CleanArchitecture.Web;
 using CleanArchitecture.Web.ApiModels;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Tests.Integration.Web
+namespace CleanArchitecture.FunctionalTests.Api
 {
     public class ApiGuestbookControllerGetByIdShould : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
@@ -17,11 +19,11 @@ namespace CleanArchitecture.Tests.Integration.Web
         }
 
         [Fact]
-        public void ReturnGuestbookWithOneItem()
+        public async Task ReturnGuestbookWithOneItem()
         {
-            var response = _client.GetAsync("/api/guestbook/1").Result;
+            var response = await _client.GetAsync("/api/guestbook/1");
             response.EnsureSuccessStatusCode();
-            var stringResponse = response.Content.ReadAsStringAsync().Result;
+            var stringResponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(1, result.Id);
@@ -29,14 +31,13 @@ namespace CleanArchitecture.Tests.Integration.Web
         }
 
         [Fact]
-        public void Return404GivenInvalidId()
+        public async Task Return404GivenInvalidId()
         {
             string invalidId = "100";
-            var response = _client.GetAsync($"/api/guestbook/{invalidId}").Result;
+            var response = await _client.GetAsync($"/api/guestbook/{invalidId}");
+            var stringResponse = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            var stringResponse = response.Content.ReadAsStringAsync().Result;
-
             Assert.Equal(invalidId, stringResponse);
         }
     }

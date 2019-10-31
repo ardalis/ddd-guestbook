@@ -22,7 +22,15 @@ namespace CleanArchitecture.Infrastructure.Data
             {
                 return _dbContext.Set<Guestbook>().Include(g => g.Entries).SingleOrDefault(e => e.Id == id) as T;
             }
+
             return _dbContext.Set<T>().SingleOrDefault(e => e.Id == id);
+        }
+
+        public T GetById<T>(int id, string include) where T : BaseEntity
+        {
+            return _dbContext.Set<T>()
+                .Include(include)
+                .SingleOrDefault(e => e.Id == id);
         }
 
         public List<T> List<T>(ISpecification<T> spec = null) where T : BaseEntity
@@ -31,6 +39,7 @@ namespace CleanArchitecture.Infrastructure.Data
             {
                 return _dbContext.Set<Guestbook>().Include(g => g.Entries).ToList() as List<T>;
             }
+
             var query = _dbContext.Set<T>().AsQueryable();
             if (spec != null)
             {

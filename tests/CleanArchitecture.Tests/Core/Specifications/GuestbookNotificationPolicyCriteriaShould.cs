@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace CleanArchitecture.Tests.Core.Specifications
+namespace CleanArchitecture.UnitTests.Core.Specifications
 {
     public class GuestbookNotificationPolicyCriteriaShould
     {
@@ -53,5 +53,4 @@ namespace CleanArchitecture.Tests.Core.Specifications
             Assert.NotNull(entriesToNotify.SingleOrDefault(e => e.Id == 3));
         }
     }
-
 }

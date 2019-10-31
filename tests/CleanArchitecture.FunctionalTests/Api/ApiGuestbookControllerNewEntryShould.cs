@@ -5,9 +5,10 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace CleanArchitecture.Tests.Integration.Web
+namespace CleanArchitecture.FunctionalTests.Api
 {
     public class ApiGuestbookControllerNewEntryShould : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
@@ -19,31 +20,30 @@ namespace CleanArchitecture.Tests.Integration.Web
         }
 
         [Fact]
-        public void Return404GivenInvalidId()
+        public async Task Return404GivenInvalidId()
         {
             string invalidId = "100";
             var entryToPost = new { EmailAddress = "test@test.com", Message = "test" };
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
-                "application/json");
-            var response = _client.PostAsync($"/api/guestbook/{invalidId}/NewEntry", jsonContent).Result;
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8, "application/json");
+            
+            var response = await _client.PostAsync($"/api/guestbook/{invalidId}/NewEntry", jsonContent);
+            var stringResponse = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            var stringResponse = response.Content.ReadAsStringAsync().Result;
-
             Assert.Equal(invalidId, stringResponse);
         }
 
         [Fact]
-        public void ReturnGuestbookWithNewItem()
+        public async Task ReturnGuestbookWithOneItem()
         {
             int validId = 1;
             string message = Guid.NewGuid().ToString();
             var entryToPost = new { EmailAddress = "test@test.com", Message = message };
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8,
-                "application/json");
-            var response = _client.PostAsync($"/api/guestbook/{validId}/NewEntry", jsonContent).Result;
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(entryToPost), Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync($"/api/guestbook/{validId}/NewEntry", jsonContent);
             response.EnsureSuccessStatusCode();
-            var stringResponse = response.Content.ReadAsStringAsync().Result;
+            var stringResponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<GuestbookDTO>(stringResponse);
 
             Assert.Equal(validId, result.Id);

@@ -1,15 +1,18 @@
-﻿using CleanArchitecture.Core.Entities;
+﻿using System;
+using System.Threading.Tasks;
+using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Threading.Tasks;
 
 namespace CleanArchitecture.Web.Filters
 {
     public class VerifyGuestbookExistsAttribute : TypeFilterAttribute
     {
         public VerifyGuestbookExistsAttribute() : base(typeof(VerifyGuestbookExistsFilter))
-        { }
+        {
+
+        }
 
         private class VerifyGuestbookExistsFilter : IAsyncActionFilter
         {
@@ -26,7 +29,7 @@ namespace CleanArchitecture.Web.Filters
                 {
                     if (context.ActionArguments["id"] is int id)
                     {
-                        if (_repository.GetById<Guestbook>(id) == null)
+                        if (_repository.GetById<Guestbook>(id) is null)
                         {
                             context.Result = new NotFoundObjectResult(id);
                             return;

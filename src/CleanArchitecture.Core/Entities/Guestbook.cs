@@ -7,11 +7,15 @@ namespace CleanArchitecture.Core.Entities
 {
     public class Guestbook : BaseEntity
     {
-        public string Name { get; set; }
-
         private readonly List<GuestbookEntry> _entries = new List<GuestbookEntry>();
-        public IEnumerable<GuestbookEntry> Entries => new ReadOnlyCollection<GuestbookEntry>(_entries);
 
+        public IEnumerable<GuestbookEntry> Entries
+        {
+            get { return new ReadOnlyCollection<GuestbookEntry>(_entries); }
+        }
+
+        public string Name { get; set; }
+        
         public void AddEntry(GuestbookEntry entry)
         {
             _entries.Add(entry);

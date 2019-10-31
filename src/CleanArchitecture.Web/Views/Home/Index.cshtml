@@ -3,8 +3,6 @@
 }
 @model CleanArchitecture.Web.ViewModels.HomePageViewModel
 
-<h2>Guestbook: @Model.GuestbookName</h2>
-
 <form asp-controller="Home" asp-action="Index" method="post" class="form-horizontal">
     <h4>Sign the Guestbook</h4>
     <hr />
@@ -30,7 +28,9 @@
     </div>
 </form>
 
+<h2>Guestbook: @Model.GuestbookName</h2>
 <h3>Messages:</h3>
+
 <ol class="round">
     @if (!Model.PreviousEntries.Any())
     {
@@ -45,6 +45,5 @@
             <h5>@entry.EmailAddress - @entry.DateTimeCreated</h5>
             @entry.Message
         </li>
-
     }
 </ol>
